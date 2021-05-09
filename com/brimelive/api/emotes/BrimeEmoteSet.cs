@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -50,7 +51,8 @@ namespace BrimeAPI.com.brimelive.api.emotes {
         }
 
         public static BrimeEmoteSet? lookupEmoteSet(string setID) {
-            return EmoteSets.GetValueOrDefault<string, BrimeEmoteSet>(setID);
+            EmoteSets.TryGetValue(setID, out BrimeEmoteSet _result);
+            return _result;
         }
 
         public override string ToString() {

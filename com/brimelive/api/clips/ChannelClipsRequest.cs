@@ -37,7 +37,7 @@ namespace BrimeAPI.com.brimelive.api.clips {
         public ChannelClipsRequest(string channelName) : base(GET_CLIPS_FOR_CHANNEL_REQUEST) {
             this.ChannelName = channelName;
             this.RequestParameters = (() => {
-                return new string[] { ChannelName, Since, Limit, Skip, GetSortString(Sort) };
+                return new string[] { ChannelName, Since.ToString(), Limit.ToString(), Skip.ToString(), GetSortString(Sort) };
             });
         }
 

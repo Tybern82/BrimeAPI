@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using BrimeAPI.com.brimelive.api.streams;
@@ -50,7 +52,7 @@ namespace BrimeAPI.com.brimelive.api.categories {
             } else {
                 this.Streams = new List<BrimeStream>();
             }
-            this.Category = (category == null) ? new BrimeCategory() : category;
+            this.Category = category ?? new BrimeCategory();
         }
     }
 }

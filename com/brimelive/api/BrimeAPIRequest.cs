@@ -19,16 +19,20 @@ namespace BrimeAPI.com.brimelive.api {
 
         public BrimeAPIEndpoint APIEndpoint { get; private set; } = BrimeAPIEndpoint.STAGING;   // TODO: Update default to PRODUCTION
 
-        public string ClientID { get; private set; } = "";
+        public static string ClientID { get; set; } = "";
+        public bool RequiresSpecialAccess { get; private set; } = false;
 
         public abstract ResponseType getResponse();
 
         protected string RequestFormat { get; set; }
         protected GetRequestParameters RequestParameters { get; set; } = (() => { return new string[0]; });
 
-        public BrimeAPIRequest(string requestFormat) {
+        public BrimeAPIRequest(string requestFormat, bool requiresSpecialAccess) {
             this.RequestFormat = requestFormat;
+            this.RequiresSpecialAccess = requiresSpecialAccess;
         }
+
+        public BrimeAPIRequest(string requestFormat) : this(requestFormat, false) {}
 
         protected string getAPIEndpoint() {
             switch (APIEndpoint) {
@@ -41,11 +45,11 @@ namespace BrimeAPI.com.brimelive.api {
 
         protected string composeRequest(string requestFormat, string[] requestParams) {
             string _result = getAPIEndpoint();
-            _result += string.Format(requestFormat, requestParams);
-            if (_result.Contains('?')) {
+            _result += string.Format(requestFormat, requestParams); 
+            if (_result.Contains("?")) {
                 // already has query parameters, append extra query parameter
                 _result += "&client_id=" + ClientID;
-            } else { 
+            } else {
                 // no existing parameters, just add as single
                 _result += "?client_id=" + ClientID;
             }
@@ -57,6 +61,7 @@ namespace BrimeAPI.com.brimelive.api {
             // TODO: Update to handle rate limiting, etc
             // May pass off to central request handler for async processing
             Logger.Debug(() => { return "REQUEST: " + request; });
+            if (RequiresSpecialAccess) Logger.Warn("Request requires SPECIAL ACCESS enabled for the Client-ID.");
             WebResponse response = WebRequest.Create(request).GetResponse();
             string json = new StreamReader(response.GetResponseStream()).ReadToEnd();
             Logger.Debug(() => { return "RESPONSE: " + response; });
