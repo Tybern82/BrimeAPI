@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -40,7 +42,13 @@ namespace BrimeAPI.com.brimelive.api {
         protected string composeRequest(string requestFormat, string[] requestParams) {
             string _result = getAPIEndpoint();
             _result += string.Format(requestFormat, requestParams);
-            _result += "?client_id=" + ClientID;
+            if (_result.Contains('?')) {
+                // already has query parameters, append extra query parameter
+                _result += "&client_id=" + ClientID;
+            } else { 
+                // no existing parameters, just add as single
+                _result += "?client_id=" + ClientID;
+            }
             return _result;
         }
 
