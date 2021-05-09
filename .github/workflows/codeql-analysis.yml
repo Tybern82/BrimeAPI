@@ -64,8 +64,8 @@ jobs:
     #    uses a compiled language
 
     - run: |
-        nuget install packages.config -o Packages
-        dotnet build --source Packages /p:UseSharedCompilation=false
+        nuget install packages.config -o ./
+        dotnet build /p:UseSharedCompilation=false
     #   make bootstrap
     #   make release
 
