@@ -64,8 +64,15 @@ jobs:
     #    uses a compiled language
 
     - run: |
-        nuget install packages.config -o ./
+        dotnet add package Newtonsoft.Json
+        dotnet add package ably.io
+        dotnet add package NLog
+        dotnet add package Nullable
+        dotnet add package System.Threading.Channels
+        dotnet add package System.Threading.Tasks.Extensions
         dotnet build /p:UseSharedCompilation=false
+        
+    #    nuget install packages.config -o ./
     #   make bootstrap
     #   make release
 
