@@ -49,11 +49,28 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                 // Follow Alerts
                 if (message.Name == "alert") {
                     JObject data = JObject.Parse((string)message.Data);
-                    string? follower = data.Value<string>("follower");
-                    string? followerID = data.Value<string>("followerID");
-                    if (follower == null) follower = "";
-                    if (followerID == null) followerID = "";
-                    foreach (BrimeRealtimeListener listener in listeners) listener.onFollow(follower, followerID);
+                    string? type = data.Value<string>("type");
+                    if (type != null) {
+                        if (type.Equals("follow")) {
+                            string? follower = data.Value<string>("follower");
+                            string? followerID = data.Value<string>("followerID");
+                            if (follower == null) follower = "";
+                            if (followerID == null) followerID = "";
+                            foreach (BrimeRealtimeListener listener in listeners) listener.onFollow(follower, followerID);
+                        } else if (type.Equals("subscribe")) {
+                            string? subscriber = data.Value<string>("subscriber");
+                            string? subscriberID = data.Value<string>("subscriberID");
+                            if (subscriber == null) subscriber = "";
+                            if (subscriberID == null) subscriberID = "";
+                            foreach (BrimeRealtimeListener listener in listeners) listener.onSubscribe(subscriber, subscriberID, false);
+                        } else if (type.Equals("resubscribe")) {
+                            string? subscriber = data.Value<string>("subscriber");
+                            string? subscriberID = data.Value<string>("subscriberID");
+                            if (subscriber == null) subscriber = "";
+                            if (subscriberID == null) subscriberID = "";
+                            foreach (BrimeRealtimeListener listener in listeners) listener.onSubscribe(subscriber, subscriberID, true);
+                        }
+                    }
                 }
             });
 
@@ -128,6 +145,7 @@ namespace BrimeAPI.com.brimelive.api.realtime {
         public void onJoin(string username);
         public void onLeave(string username);
         public void onChat(BrimeChatMessage chatMessage);
+        public void onSubscribe(string username, string userId, bool isResub);
     }
 
     public class ViewCountTracker : BrimeRealtimeListener {
@@ -135,6 +153,8 @@ namespace BrimeAPI.com.brimelive.api.realtime {
         public void onClose() { }
         public void onFollow(string username, string id) { }
         public void onChat(BrimeChatMessage chatMessage) { }
+
+        public void onSubscribe(string username, string userID, bool isResub) { }
 
         public int ViewCount { get; set; }
 
@@ -153,6 +173,12 @@ namespace BrimeAPI.com.brimelive.api.realtime {
         public void onClose() { Logger.Trace("Connetion closed."); }
 
         public void onFollow(string username, string id) { Logger.Trace(username + " has followed (" + id + ")"); }
+
+        public void onSubscribe(string username, string userID, bool isResub) {
+            Logger.Trace(() => {
+                return string.Format("{0} from {1}", (isResub ? "Resubscription" : "Subscription"), username);
+            });
+        }
 
         public void onJoin(string username) { Logger.Trace(username + " has joined."); }
         public void onLeave(string username) { Logger.Trace(username + " has left."); }

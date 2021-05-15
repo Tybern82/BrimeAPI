@@ -12,6 +12,10 @@ namespace BrimeAPI.com.brimelive.api {
         PRODUCTION, STAGING, SANDBOX
     }
 
+    public enum BrimeRequestMode {
+        GET, POST
+    }
+
     public abstract class BrimeAPIRequest<ResponseType> {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -26,6 +30,10 @@ namespace BrimeAPI.com.brimelive.api {
 
         protected string RequestFormat { get; set; }
         protected GetRequestParameters RequestParameters { get; set; } = (() => { return new string[0]; });
+
+        protected BrimeRequestMode RequestMode { get; set; } = BrimeRequestMode.GET;
+
+        protected string PostBody { get; set; } = "";
 
         public BrimeAPIRequest(string requestFormat, bool requiresSpecialAccess) {
             this.RequestFormat = requestFormat;
@@ -62,7 +70,18 @@ namespace BrimeAPI.com.brimelive.api {
             // May pass off to central request handler for async processing
             Logger.Debug(() => { return "REQUEST: " + request; });
             if (RequiresSpecialAccess) Logger.Warn("Request requires SPECIAL ACCESS enabled for the Client-ID.");
-            WebResponse response = WebRequest.Create(request).GetResponse();
+            WebRequest req = WebRequest.Create(request);
+            if (RequestMode == BrimeRequestMode.POST) {
+                byte[] data = Encoding.UTF8.GetBytes(PostBody);
+                req.Method = "POST";
+                req.ContentType = "application/json";
+                req.ContentLength = data.Length;
+
+                using (var stream = req.GetRequestStream()) {
+                    stream.Write(data, 0, data.Length);
+                }
+            }
+            WebResponse response = req.GetResponse();
             string json = new StreamReader(response.GetResponseStream()).ReadToEnd();
             Logger.Debug(() => { return "RESPONSE: " + response; });
             return new BrimeAPIResponse(json);

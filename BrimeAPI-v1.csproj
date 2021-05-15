@@ -86,12 +86,14 @@
     <Compile Include="com\brimelive\api\clips\BrimeClip.cs" />
     <Compile Include="com\brimelive\api\clips\ChannelClipsRequest.cs" />
     <Compile Include="com\brimelive\api\clips\ClipInfoRequest.cs" />
+    <Compile Include="com\brimelive\api\clips\CreateClipRequest.cs" />
     <Compile Include="com\brimelive\api\emotes\BrimeEmote.cs" />
     <Compile Include="com\brimelive\api\emotes\BrimeEmoteSet.cs" />
     <Compile Include="com\brimelive\api\emotes\ChannelEmotesRequest.cs" />
     <Compile Include="com\brimelive\api\emotes\EmoteSetRequest.cs" />
     <Compile Include="com\brimelive\api\emotes\GlobalEmotesRequest.cs" />
     <Compile Include="com\brimelive\api\JSONUtil.cs" />
+    <Compile Include="com\brimelive\api\NoAPIResponse.cs" />
     <Compile Include="com\brimelive\api\realtime\BrimeChatMessage.cs" />
     <Compile Include="com\brimelive\api\realtime\BrimeRealtimeAPI.cs" />
     <Compile Include="com\brimelive\api\streams\BrimeStream.cs" />
@@ -102,6 +104,9 @@
     <Compile Include="com\brimelive\api\users\UserClipsRequest.cs" />
     <Compile Include="com\brimelive\api\users\UserFollowingRequest.cs" />
     <Compile Include="com\brimelive\api\users\UserRequest.cs" />
+    <Compile Include="com\brimelive\api\vods\BrimeVod.cs" />
+    <Compile Include="com\brimelive\api\vods\ChannelVodsRequest.cs" />
+    <Compile Include="com\brimelive\api\vods\VodInfoRequest.cs" />
     <Compile Include="Nullable\AllowNullAttribute.cs" />
     <Compile Include="Nullable\DisallowNullAttribute.cs" />
     <Compile Include="Nullable\DoesNotReturnAttribute.cs" />
