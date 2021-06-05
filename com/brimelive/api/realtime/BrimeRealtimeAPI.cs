@@ -1,8 +1,6 @@
 ﻿#nullable enable
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using IO.Ably;
 using IO.Ably.Realtime;
@@ -106,6 +104,7 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                 }
             });
 
+            // Deprecated
             channel.Subscribe((message) => {
                 // onChat
                 if (message.Name == "greeting") {
@@ -115,6 +114,16 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                 } else {
                     Logger.Trace("Message Name: " + message.Name);
                 }
+                /* TODO: Needs ChannelID, so will need Client-ID to use
+                switch (message.Name) {
+                    case "chat":    // updated chat messages
+                        Logger.Trace("Chat Data: " + message.Data);
+                        break;
+                    case "delete":  // delete message
+                        Logger.Trace("Delete Data: " + message.Data);
+                        break;
+                }
+                */
             });
         }
 
@@ -137,85 +146,27 @@ namespace BrimeAPI.com.brimelive.api.realtime {
             this.ably.Close();
         }
     }
-
-    public interface BrimeRealtimeListener {
-        public void onOpen();
-        public void onClose();
-        public void onFollow(string username, string id);
-        public void onJoin(string username);
-        public void onLeave(string username);
-        public void onChat(BrimeChatMessage chatMessage);
-        public void onSubscribe(string username, string userId, bool isResub);
-    }
-
-    public class ViewCountTracker : BrimeRealtimeListener {
-        public void onOpen() { }
-        public void onClose() { }
-        public void onFollow(string username, string id) { }
-        public void onChat(BrimeChatMessage chatMessage) { }
-
-        public void onSubscribe(string username, string userID, bool isResub) { }
-
-        public int ViewCount { get; set; }
-
-        public ViewCountTracker(int viewCount) {
-            this.ViewCount = viewCount;
-        }
-
-        public void onJoin(string username) { this.ViewCount++; }
-        public void onLeave(string username) { this.ViewCount--; }
-    }
-
-    public class TracedBrimeListener : BrimeRealtimeListener {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public void onOpen() { Logger.Trace("Connection opened."); }
-        public void onClose() { Logger.Trace("Connetion closed."); }
-
-        public void onFollow(string username, string id) { Logger.Trace(username + " has followed (" + id + ")"); }
-
-        public void onSubscribe(string username, string userID, bool isResub) {
-            Logger.Trace(() => {
-                return string.Format("{0} from {1}", (isResub ? "Resubscription" : "Subscription"), username);
-            });
-        }
-
-        public void onJoin(string username) { Logger.Trace(username + " has joined."); }
-        public void onLeave(string username) { Logger.Trace(username + " has left."); }
-
-        public void onChat(BrimeChatMessage chatMessage) {
-            Logger.Info("MSG from <" /*+ chatMessage.Sender.DisplayName*/ + ">: \"" + EncodeNonAsciiCharacters(chatMessage.Message) + "\"");
-        }
-        static string EncodeNonAsciiCharacters(string value) {
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in value) {
-                if (c > 127) {
-                    // This character is too big for ASCII
-                    string encodedValue = "\\u" + ((int)c).ToString("x4");
-                    sb.Append(encodedValue);
-                } else {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
-        }
-    }
-
-    public class AblyLogHandler : ILoggerSink {
-
-        private NLog.Logger Logger;
-
-        public AblyLogHandler(NLog.Logger logger) {
-            this.Logger = logger;
-        }
-
-        public void LogEvent(LogLevel level, string message) {
-            switch (level) {
-                case LogLevel.Debug:    Logger.Debug(message);  break;
-                case LogLevel.Error:    Logger.Error(message);  break;
-                case LogLevel.Warning:  Logger.Warn(message);   break;
-                default:                Logger.Info(message);   break;
-            }
-        }
-    }
 }
+
+/*
+need to use the new ably endpoint, "channelId/chat"
+here's the new payloads schema for the new endpoint:
+chat:
+{
+  _id: String,
+  channelID: String,
+  sender: User,
+  message: String,
+  richContents: String, // Used by brimebot.
+  emotes: Emote[],
+  timestamp: Number
+}
+
+delete:
+{
+  _id: String,
+  messageID: String
+}
+[3:48 AM]
+use the ably name field to get the type of message
+*/

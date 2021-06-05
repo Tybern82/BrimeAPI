@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using BrimeAPI.com.brimelive.api.categories;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -157,4 +156,77 @@ namespace BrimeAPI.com.brimelive.api.streams {
         "acodec": "mp4a.40.2",
         "protocol": "RTMP"
       }
+*/
+
+/* TODO: Updated structure
+"data": {
+    "_id": "6050a4804b90bf0430aec1e2",
+    "channel": "Geeken",
+    "channelId": "6050a4804b90bf0430aec1e2",
+    "streamThumbnailUrl": "https://content.brimecdn.com/live/VibeFM/thumbnail.jpg",
+    "category": {
+      "_id": "606e924e5fa50e5780970134",
+      "genres": [],
+      "name": "Just Chatting",
+      "slug": "just-chatting",
+      "summary": "",
+      "cover": "https://content.brimecdn.com/brime/category_images/just_chatting.png",
+      "type": "entertainment"
+    },
+    "title": "Geeken's Stream",
+    "isLive": true,
+    "publishTime": "2021-05-17T10:10:12.000Z",
+    "streams": [
+      {
+        "bandwidth": 7078172,
+        "resolution": "1920x1080",
+        "vcodec": "avc1.4d4028",
+        "acodec": "mp4a.40.2",
+        "protocol": "RTMP",
+        "isSource": true
+      },
+      {
+        "bandwidth": 6021359,
+        "resolution": "1280x720",
+        "vcodec": "avc1.42c01f",
+        "acodec": "mp4a.40.2",
+        "protocol": "RTMP",
+        "isSource": false
+      },
+      {
+        "bandwidth": 3557832,
+        "resolution": "854x480",
+        "vcodec": "avc1.42c01f",
+        "acodec": "mp4a.40.2",
+        "protocol": "RTMP",
+        "isSource": false
+      },
+      {
+        "bandwidth": 1326782,
+        "resolution": "426x240",
+        "vcodec": "avc1.42c015",
+        "acodec": "mp4a.40.2",
+        "protocol": "RTMP",
+        "isSource": false
+      }
+    ],
+    "broadcastingUser": {
+      "_id": "603b901b0a8fe286fc6f1229",
+      "username": "geeken",
+      "displayname": "Geeken",
+      "avatar": "https://content.brimecdn.com/brime/user/603b901b0a8fe286fc6f1229/avatar",
+      "badges": [
+        "https://beta.brimelive.com/brime_verified.png"
+      ],
+      "roles": [
+        "admin"
+      ],
+      "color": "#00e025",
+      "isBrimePro": false,
+      "extendedVodsEnabled": false,
+      "channels": [
+        "6050a4804b90bf0430aec1e2"
+      ]
+    }
+  }
 */

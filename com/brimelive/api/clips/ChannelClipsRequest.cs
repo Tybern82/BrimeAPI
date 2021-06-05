@@ -3,14 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BrimeAPI.com.brimelive.api.errors;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.clips {
-
-    public enum ClipSortOrder { 
-        ASC,    // Oldest->Newest
-        DESC    // Newest->Oldest
-    }
 
     public class ChannelClipsRequest : BrimeAPIRequest<List<BrimeClip>> {
 
@@ -31,24 +27,14 @@ namespace BrimeAPI.com.brimelive.api.clips {
                 _Limit = (value > 150) ? 150 : (value < 1) ? 1 : value;
             }
         }
-        public int Skip { get; set;}
-        public ClipSortOrder Sort { get; set;}
+        public int Skip { get; set; } = 0;
+        public SortOrder Sort { get; set; } = SortOrder.DESC;
 
         public ChannelClipsRequest(string channelName) : base(GET_CLIPS_FOR_CHANNEL_REQUEST) {
             this.ChannelName = channelName;
             this.RequestParameters = (() => {
-                return new string[] { ChannelName, Since.ToString(), Limit.ToString(), Skip.ToString(), GetSortString(Sort) };
+                return new string[] { ChannelName, Since.ToString(), Limit.ToString(), Skip.ToString(), Sort.GetSortString() };
             });
-        }
-
-        public static string GetSortString(ClipSortOrder order) {
-            switch (order) {
-                case ClipSortOrder.ASC: 
-                    return "asc";
-                case ClipSortOrder.DESC: 
-                default: 
-                    return "desc";
-            }
         }
 
         public override List<BrimeClip> getResponse() {

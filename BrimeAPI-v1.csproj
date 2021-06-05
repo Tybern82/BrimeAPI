@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>BrimeAPIDoc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>BrimeAPIDoc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IO.Ably, Version=1.2.4.0, Culture=neutral, PublicKeyToken=70c9e5c3d2c68b16, processorArchitecture=MSIL">
@@ -71,7 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="com\brimelive\api\BrimeAPIError.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIError.cs" />
     <Compile Include="com\brimelive\api\BrimeAPIRequest.cs" />
     <Compile Include="com\brimelive\api\BrimeAPIResponse.cs" />
     <Compile Include="com\brimelive\api\categories\BrimeCategory.cs" />
@@ -92,10 +94,26 @@
     <Compile Include="com\brimelive\api\emotes\ChannelEmotesRequest.cs" />
     <Compile Include="com\brimelive\api\emotes\EmoteSetRequest.cs" />
     <Compile Include="com\brimelive\api\emotes\GlobalEmotesRequest.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIException.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIInternalError.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIInvalidChannel.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIInvalidClientID.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMalformedResponse.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMissingAccess.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMissingParameter.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMissingScope.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPINotImplemented.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIRateLimitExceeded.cs" />
     <Compile Include="com\brimelive\api\JSONUtil.cs" />
     <Compile Include="com\brimelive\api\NoAPIResponse.cs" />
+    <Compile Include="com\brimelive\api\RateLimitedRequestHandler.cs" />
+    <Compile Include="com\brimelive\api\realtime\AblyLogHandler.cs" />
     <Compile Include="com\brimelive\api\realtime\BrimeChatMessage.cs" />
     <Compile Include="com\brimelive\api\realtime\BrimeRealtimeAPI.cs" />
+    <Compile Include="com\brimelive\api\realtime\BrimeRealtimeListener.cs" />
+    <Compile Include="com\brimelive\api\realtime\TracedBrimeListener.cs" />
+    <Compile Include="com\brimelive\api\realtime\ViewCountTracker.cs" />
+    <Compile Include="com\brimelive\api\SortOrder.cs" />
     <Compile Include="com\brimelive\api\streams\BrimeStream.cs" />
     <Compile Include="com\brimelive\api\streams\LiveStreamsRequest.cs" />
     <Compile Include="com\brimelive\api\streams\StreamRequest.cs" />
@@ -104,7 +122,7 @@
     <Compile Include="com\brimelive\api\users\UserClipsRequest.cs" />
     <Compile Include="com\brimelive\api\users\UserFollowingRequest.cs" />
     <Compile Include="com\brimelive\api\users\UserRequest.cs" />
-    <Compile Include="com\brimelive\api\vods\BrimeVod.cs" />
+    <Compile Include="com\brimelive\api\vods\BrimeVOD.cs" />
     <Compile Include="com\brimelive\api\vods\ChannelVodsRequest.cs" />
     <Compile Include="com\brimelive\api\vods\VodInfoRequest.cs" />
     <Compile Include="Nullable\AllowNullAttribute.cs" />
@@ -121,9 +139,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

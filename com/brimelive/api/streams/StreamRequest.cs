@@ -1,13 +1,12 @@
 ﻿#nullable enable 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BrimeAPI.com.brimelive.api;
+using BrimeAPI.com.brimelive.api.errors;
 
 namespace BrimeAPI.com.brimelive.api.streams {
+
+    /// <summary>
+    /// Queries for a stream by the given channel and returns the data for that stream.
+    /// </summary>
     public class StreamRequest : BrimeAPIRequest<BrimeStream> {
 
         private static readonly string GET_STREAM_REQUEST = "/v1/stream/{0}";      // /v1/stream/:channel

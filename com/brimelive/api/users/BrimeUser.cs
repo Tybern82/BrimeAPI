@@ -16,6 +16,8 @@ namespace BrimeAPI.com.brimelive.api.users {
         public string Color { get; private set; }
         public List<string> Roles { get; private set; }
         public List<string> Badges { get; private set; }
+        public bool isBrimePro { get; private set; } = false;
+        public bool extendedVODsEnabled { get; private set; } = false;
 
         public BrimeUser() {
             UserID = "";
@@ -58,6 +60,9 @@ namespace BrimeAPI.com.brimelive.api.users {
                     Badges.Add(badge.ToString());
                 }
             }
+
+            isBrimePro = jsonData.Value<bool>("isBrimePro");
+            extendedVODsEnabled = jsonData.Value<bool>("extendedVodsEnabled");
         }
 
         public override string ToString() {

@@ -12,15 +12,24 @@ namespace BrimeAPI.com.brimelive.api.realtime {
 
         public static readonly string IMAGE_URL_FORMAT = "https://content.brimecdn.com/brime/emote/{0}/{1}";
 
+        public string ID { get; private set; }
         public string ChannelID { get; private set; }
         public string Message { get; private set; }
         public BrimeUser Sender { get; private set; }
         public Dictionary<string, BrimeChatEmote> Emotes { get; private set; } = new Dictionary<string, BrimeChatEmote>();
+        public DateTime Timestamp { get; private set; }
 
         public BrimeChatMessage(JToken message) {
             // Logger.Trace("Loading Chat Message: " + message);
+            string? __notice = message.Value<string>("__notice");
+            if (!string.IsNullOrWhiteSpace(__notice))
+                Logger.Info("Notice: " + __notice);
+
             string? curr = message.Value<string>("channelID");
             ChannelID = (curr == null) ? "" : curr;
+
+            curr = message.Value<string>("_id");
+            ID = (curr == null) ? "" : curr;
 
             curr = message.Value<string>("message");
             Message = (curr == null) ? "" : curr;
@@ -30,14 +39,20 @@ namespace BrimeAPI.com.brimelive.api.realtime {
 
             JToken? emotes = message["emotes"];
             if (emotes != null) {
-                // foreach (JToken item in emotes) {
-                    // Console.WriteLine(item.ToString());
-
-                    // string? name = item.Value<string>("name");
-                    // string? id = item.Value<string>("_id");
-                // }
+                foreach (JToken item in emotes) {
+                    if (item != null) {
+                        JProperty? prop = item.ToObject<JProperty>();
+                        if (prop != null) {
+                            string name = prop.Name;
+                            string? id = prop.Value.Value<string>("_id");
+                            if (id != null) {
+                                Emotes.Add(name, new BrimeChatEmote(id));
+                            }
+                        }
+                    }
+                }
             }
-            // TODO: Add Sender and Emotes
+            Timestamp = message.Value<DateTime>("timestamp");
         }
 
         public override string ToString() {

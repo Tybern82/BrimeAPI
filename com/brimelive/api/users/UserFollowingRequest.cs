@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrimeAPI.com.brimelive.api.errors;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.users {

@@ -1,0 +1,870 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BrimeAPI</name>
+    </assembly>
+    <members>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.ErrorCheckResult">
+            <summary>
+            Defines the states possible when checking for errors in API response. Can be either a VALID response, a response containing
+            one, or more, ERROR conditions, or a request that needs to RETRY due to a temporary issue (currently only Rate Limit Exceeded).
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.errors.ErrorCheckResult.VALID">
+            <summary>API Response contained the requested data</summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.errors.ErrorCheckResult.ERROR">
+            <summary>API Request produced an error, will need to check request before trying again</summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.errors.ErrorCheckResult.RETRY">
+            <summary>API Request did not successfully complete, will need to be retried</summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIError">
+            <summary>
+            <c>BrimeAPIError</c> defines/implements the various error responses possible with an API request. Note this class does not
+            represent a C# Exception, for that we use <c>BrimeAPIException</c> and its subclasses. This class is used to wrap/interpret
+            the responses provided from the API which are then converted into the C# Exceptions users of the library should be detecting.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.Logger">
+            <summary>Class Logging instance.</summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.Name">
+            <summary>
+            Error response name. This name is used to identify the specific error which has occurred, as the <c>ErrorCode</c>
+            can be shared by multiple different errors.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.ErrorCode">
+            <summary>
+            Error response code. This code is generally related to the associated HTTP response code which would be returned
+            by this particular error. This code may be the default if the Name was not recognized as a known error response.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.Message">
+            <summary>
+            Descriptive message provided with the error. This message may contain more specific information on the cause of the
+            error, or what may be needed to correct it. 
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.#ctor(System.String,System.Int32,System.String)">
+            <summary>
+            Create a new instance, using given Name, ErrorCode and Message. Constructors for this class are <c>private</c>
+            since they should only be created in response to parsing the API response JSON.
+            </summary>
+            <param name="name">Identifying name of the error, as provided in the API response</param>
+            <param name="errorCode">Error code associated with this error, if known, or default if unknown error</param>
+            <param name="message">Descriptive message provided with this error in API response</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.#ctor(System.String,System.Int32)">
+            <summary>
+            Create a new instance, using an empty message component.
+            </summary>
+            <param name="name">Identifying name of the error</param>
+            <param name="errorCode">Status code associated with this error (may be default if unknown error)</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.CheckError(BrimeAPI.com.brimelive.api.BrimeAPIResponse)">
+            <summary>
+            Runs check over given API response to identify whether an error has occured with the request. Will also 
+            identify if the request needs to be retried due to temporary issues.
+            </summary>
+            <param name="response">API response to check</param>
+            <returns><c>ErrorCheckResult</c> will be VALID if no issues, RETRY if Rate limited, or ERROR for other issues</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.ThrowException(BrimeAPI.com.brimelive.api.BrimeAPIResponse)">
+            <summary>
+            Throws exception for the first detected error in the response.
+            </summary>
+            <param name="response">API response to validate</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.lookupError(System.String)">
+            <summary>
+            Primary public constructor for this class. Processes the given error message (which should have been supplied in
+            the JSON response to an API request) to produce an instance of this class.
+            </summary>
+            <param name="errorMessage">Should be in the format "NAME: Message" as provided by API response data in JSON</param>
+            <returns>Parses the contents of the given message and creates an appropriate instance of this class</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.getErrorCode(System.String)">
+            <summary>
+            Internal helper method to lookup the associated ErrorCode for a given Name
+            </summary>
+            <param name="errorName">Identifying Name of the error</param>
+            <returns>ErrorCode for this name, or 418 if the name was not recognized</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIError.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIException">
+            <summary>
+            Base class for exceptions generated in response to API requests. Catching this exception should catch all exceptions
+            which may be generated by the API itself, however exceptions generated by the underlying transport will not necessarily
+            be included.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.errors.BrimeAPIException.Error">
+            <summary>
+            Used to define the underlying API Error which has triggered this exception. 
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIException.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Constructs a new <c>Exception</c> for the given <c>BrimeAPIError</c>
+            </summary>
+            <param name="apiError">API Error which has triggered this</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIException.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError,System.Exception)">
+            <summary>
+            Constructor used when creating an <c>Exception</c> based on an underlying <c>Exception</c>. This constructor is primarily
+            for the <c>BrimeAPIMalformedResponse</c>, as this is not actually an API response Error, but is triggered when the actual
+            API response contains invalid JSON or is missing required elements in the JSON response. This exception generally indicates
+            that the current API does not fully match the API specification in this version of the library.
+            </summary>
+            <param name="apiError">API Error which has triggered this</param>
+            <param name="baseException">An underlying Exception which may have caused the exception</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIException.#ctor(System.Exception)">
+            <summary>
+            Constructor used to support wrapping of transport exceptions into the API. Can be used to rethrow exceptions generated
+            in sending/receiving API data. This is used to prevent exceptions generated by the current implementation from propagating
+            outside this library. Wraps the base exception as an Internal Error for the API.
+            </summary>
+            <param name="baseException">Existing exception which has prevented correct response to API request</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIInternalError">
+            <summary>
+            Represents an Internal Server error when making API request.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIInternalError.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "INTERNAL_ERROR"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIInvalidChannel">
+            <summary>
+            Exception thrown when the API request was for a non-existent or invalid channel.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIInvalidChannel.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "INVALID_CHANNEL"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIInvalidClientID">
+            <summary>
+            Exception thrown when the API request included an invalid Client-ID. Note that the Error will 
+            generally be a missing parameter if the Client-ID was not sent at all.
+            </summary>
+            <seealso cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingParameter"/>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIInvalidClientID.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "INVALID_CLIENT_ID"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">
+            <summary>
+            Internal API Exception, thrown when the JSON response to an API request is missing required elements, or contains
+            invalid/unparseable values for those elements. This exception generally indicates that the current API does not 
+            fully match the API specification in this version of the library. 
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse.#ctor(System.String)">
+            <summary>
+            Construct a new exception with only an error message.
+            </summary>
+            <param name="message">Descriptive message for this error</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse.#ctor(System.String,System.Exception)">
+            <summary>
+            Construct a new exception with both error message, and a base exception which triggered the error.
+            </summary>
+            <param name="message">Descriptive message for this error</param>
+            <param name="baseException">Base exception which caused the issue with processing the response</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingAccess.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Exception thrown when request is made which is missing required access. <c>BrimeAPIError.Name</c> should be "MISSING_ACCESS"
+            which appears to be returned when request made which requires <c>BrimeAPIRequest.RequiresSpecialAccess</c>
+            </summary>
+            <param name="apiError">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingParameter">
+            <summary>
+            Exception thrown when API request was missing a required parameter. This will also be the exception thrown
+            when the request failed to include a Client-ID (though if the ID was included, but not valid this will 
+            instead generate a <c>BrimeAPIInvalidClientID</c>).
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingParameter.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "MISSING_PARAMETER"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingScope">
+            <summary>
+            Exception thrown when API request was made with an identifier that does not include the required scope for
+            this request. 
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingScope.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "MISSING_SCOPE"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPINotImplemented">
+            <summary>
+            Exception thrown when API request was to an endpoint which is not currently implemented.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPINotImplemented.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "NOT_IMPLEMENTED"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIRateLimitExceeded">
+            <summary>
+            Exception thrown when client has sent too many requests recently and has been rate limited. Indicates caller needs
+            to wait and retry the request.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.errors.BrimeAPIRateLimitExceeded.#ctor(BrimeAPI.com.brimelive.api.errors.BrimeAPIError)">
+            <summary>
+            Create a new exception. <c>BrimeAPIError.Name</c> should be "RATE_LIMIT_EXCEEDED"
+            </summary>
+            <param name="error">API Error which triggered this exception</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.BrimeAPIEndpoint">
+            <summary>Defines API interface being used.</summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeAPIEndpoint.PRODUCTION">
+            <summary>Main Production API - current public release.</summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeAPIEndpoint.STAGING">
+            <summary>Main Testing API - next scheduled public release.</summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeAPIEndpoint.SANDBOX">
+            <summary>Sandbox Testing API</summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.BrimeRequestMode">
+            <summary>
+            Used to specify the request mode - default is normally GET.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeRequestMode.GET">
+            <summary>
+            Request is expected to return API response data, default request mode
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeRequestMode.POST">
+            <summary>
+            Request is expected to trigger on server, normally no response data. (ie Used when using API to create clip on channel.)
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1">
+            <summary>
+            Base class used to define a specific API request. This class contains the normal structures required to implement the request
+            to the platform (ie Client-ID, API base endpoint, etc) and will be responsible for managing rate-limiting requests. (TODO)
+            </summary>
+            <typeparam name="ResponseType">Defines the detail class used for the response to this request</typeparam>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.Logger">
+            <summary>Class Logger instance</summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.APIEndpoint">
+            <summary>
+            Specifies the specific API endpoint to use in this request. Currently defaults to STAGING, will be updated to PRODUCTION once
+            this version of the API is finalized. 
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.ClientID">
+            <summary>
+            Specifies the Client-ID sent with requests to the API. Note that in order to use this library you will need to have a valid 
+            Client-ID assigned. This field is static so will only need to be specified once.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.RequiresSpecialAccess">
+            <summary>
+            Specifies whether this request requires special access on the Client-ID in order to complete successfully. Currently this is required
+            for User-details requests. 
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.getResponse">
+            <summary>
+            Create a custom object from the request. 
+            </summary>
+            <example>Normal implementation: <code>
+            BrimeAPIResponse response = doRequest();    // Process request and generate response. <br/>
+            BrimeAPIError.ThrowException(response);     // Trigger any exceptions generated by the request.<br/>
+            return new ResponseType(response.Data);     // Construct the custom object for this type of request.<br/>
+            </code></example>
+            <returns>Custom object based on the type of information requested.</returns>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIInternalError">Internal server error.</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPINotImplemented">This endpoint is not implemented.</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingParameter">Request is missing a required parameter</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIInvalidClientID">Request included an invalid Client-ID</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMissingScope">Request ID was missing the required scope for this endpoint</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIInvalidChannel">Request referenced an invalid channel</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIRateLimitExceeded">Too many requests have been issued recently</exception>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIException">An error not currently recognised by this API implementation was returned</exception>
+            
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.RequestFormat">
+            <summary>
+            Request format for this particular request. This is set by the specific implementing class to define the path to the specific
+            endpoint, and will include placeholders to be replaced by <see cref="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.RequestParameters"/> using <see cref="M:System.String.Format(System.String,System.Object[])"/>
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.GetRequestParameters">
+            <summary>
+            Defines the delegate structure used to specify the string parameters. Delegate is used to ensure that the parameters are retrieved
+            at the moment of the request, allowing them to be changed between creation of the request and the actual call, or between multiple
+            invokations of a particular call. Particularly used for requests which allow paging through results - same request can just be 
+            updated to skip the appropriate number of items and be re-triggered without other modification.
+            </summary>
+            <returns>an array of string entries to be used to fill the placeholders in <see cref="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.RequestFormat"/></returns>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.RequestParameters">
+            <summary>
+            Parameters to be included in the API request. This is set by the specific implementing class as a function which will select the
+            correct set of parameters when the request is triggered. Default implementation is for requests which require no parameters.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.RequestMode">
+            <summary>
+            Specify the mode to use for this API request. Default is GET, but can also be set to POST request.
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.GetPostBody">
+            <summary>
+            Defines the delegate structure used to specify a post body for a request.
+            </summary>
+            <returns>string to be used for the post body in a POST request</returns>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.PostBody">
+            <summary>
+            Used only with POST requests to specify the body of the request to send. Default just returns an empty string.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.#ctor(System.String,System.Boolean)">
+            <summary>
+            Create a new API request. Used directly when needing to include <c>requiresSpecialAccess=true</c>.
+            </summary>
+            <param name="requestFormat">used to set <c>RequestFormat</c></param>
+            <param name="requiresSpecialAccess">true if this request requires special API access, false for most requests</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.#ctor(System.String)">
+            <summary>
+            Normal constructor, will call other constructor defaulting <c>requiresSpecialAccess=false</c>
+            </summary>
+            <param name="requestFormat">used to set <c>RequestFormat</c></param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.getAPIEndpoint">
+            <summary>
+            Helper method to retrieve the correct API endpoint base.
+            </summary>
+            <returns>base website address for the currently selected API Endpoint</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.composeRequest">
+            <summary>
+            Helper method to construct the full API URL. Takes <c>getAPIEndpoint</c> and appends <c>RequestFormat</c>, correctly
+            replacing placeholders with <c>RequestParameters</c>.
+            </summary>
+            <returns>URL string for the full address specified in this API request</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.doRequest">
+            <summary>
+            Helper method to trigger this API request. This central method is used to actually perform the request to the 
+            endpoint, and process the response. This method is centralized to allow easy activation of rate-limiting of 
+            the service. Note this method should not trigger any exceptions due to errors in the response data.
+            </summary>
+            <returns>API response created as a result of this request</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.BrimeAPIResponse">
+            <summary>
+            Response to API request. Provides access to API Notice information and any errors generated by the request.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.BrimeAPIResponse.Logger">
+            <summary>Local NLog logging class.</summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIResponse.Data">
+            <summary>
+            Contains the JSON response for the request. 
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIResponse.Errors">
+            <summary>
+            List of <c>BrimeAPIError</c> entries returned by the request.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPIResponse.__Notice">
+            <summary>
+            Contains API Notice returned by the request. As per the API v1 specification: 
+            <em>The <c>__notice</c> field will only be present when there is a notice, this will be used to notify 
+            you of upcoming Api changes. You should implement an alert system internally to notify you 
+            when this field is present.</em>
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPIResponse.#ctor(System.String)">
+            <summary>
+            Constructor for API Response. Decodes any JSON response data, and identifies any error or notice components.
+            </summary>
+            <param name="json">JSON data returned by the API request.</param>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">Thrown only if there is an issue processing the API Error response.</exception>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.categories.CategoryRequest">
+            <summary>
+            Gets information for a specific category.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.categories.CategoryRequest.GET_CATEGORY_REQUEST">
+            <summary>
+            [API]/v1/category/:category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.CategoryRequest.Category">
+            <summary>
+            Specify the Category to request by either Name, ID, or Slug.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryRequest.#ctor(System.String)">
+            <summary>
+            <c>CategoryRequest</c> constructor. Requires parameter specifying the category to get information from.
+            </summary>
+            <param name="category">The category name, id, or slug.</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryRequest.getResponse">
+            <summary>
+            Generate BrimeCategory from API response.
+            </summary>
+            <returns><c>BrimeCategory</c> for the requested category name/id/slug.</returns>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">If there is an error in the returned Category.</exception>
+            <seealso cref="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.getResponse"/>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.JSONUtil">
+            <summary>
+            Helper class for performing conversions to JSON. 
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToString(System.String[])">
+            <summary>
+            Convert the given array of <c>string</c> items into a JSON array element. Ensures that the items are correctly
+            converted to JSON strings as they are included.
+            </summary>
+            <param name="data">array of items to convert to JSON array of strings</param>
+            <returns>JSON array of provided string entries</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToString(System.Collections.Generic.List{System.String})">
+            <summary>
+            Convert the given list of <c>string</c> items into JSON array element. <br/>
+            See: <see cref="M:BrimeAPI.com.brimelive.api.JSONUtil.ToString(System.String[])"/>
+            </summary>
+            <param name="data">list of items to convert to JSON array of strings</param>
+            <returns>JSON array of provided string entries</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONEntry(System.String,System.String)">
+            <summary>
+            Convert the given item into a new JSON entry. Assumes the value is already a valid JSON item.
+            </summary>
+            <param name="value">JSON body for the entry</param>
+            <param name="name">name for the entry</param>
+            <returns>"name": value</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONEntry(System.String[])">
+            <summary>
+            Collects the given set of items into a new composite entity. Assumes the items in the list are
+            already valid JSON entries.
+            </summary>
+            <param name="items">array of JSON items</param>
+            <returns>{ item[0], item[1],... item[n] }</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.TOJSONEntry(System.Collections.Generic.List{System.String})">
+            <summary>
+            Collects the given set of items into a new composite entity. Assumes the items in the list are
+            already valid JSON entries.
+            </summary>
+            <param name="items">list of JSON items</param>
+            <returns>{ item[0], item[1],... item[n] }</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.MakeJSONArray(System.String[])">
+            <summary>
+            Collect given set of items into an array. Assumes the items in the array are already valid JSON entries.
+            </summary>
+            <param name="items">array of JSON items</param>
+            <returns>[ item[0], item[1],... item[n] ]</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONString(System.Boolean)">
+            <summary>
+            Convert the given <c>bool</c> value to its JSON equivalent
+            </summary>
+            <param name="b">value to process</param>
+            <returns>JSON equivalent of value</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONString(System.Int32)">
+            <summary>
+            Convert the given <c>int</c> value to its JSON equivalent
+            </summary>
+            <param name="b">value to process</param>
+            <returns>JSON equivalent of value</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONString(System.Object)">
+            <summary>
+            Convert the given <c>object</c> value to its JSON equivalent
+            </summary>
+            <param name="b">value to process</param>
+            <returns>JSON equivalent of value</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONString(System.Uri)">
+            <summary>
+            Convert the given <c>Uri</c> value to its JSON equivalent
+            </summary>
+            <param name="b">value to process</param>
+            <returns>JSON equivalent of value</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONString(System.String[])">
+            <summary>
+            Wrapper to <c>ToString(string[])</c> - will convert calls to this over to this method then 
+            move body to this method and remove. <br />
+            See: <see cref="M:BrimeAPI.com.brimelive.api.JSONUtil.ToString(System.String[])"/>
+            </summary>
+            <param name="data">array of items to convert to JSON array of strings</param>
+            <returns>[ "data[0]", "data[1]",... "data[n]" ]</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.ToJSONString(System.Collections.Generic.List{System.String})">
+            <summary>
+            Wrapper to <c>ToString(List{string})</c> - will convert calls to this over to this method then 
+            move body to this method and remove. <br />
+            See: <see cref="M:BrimeAPI.com.brimelive.api.JSONUtil.ToString(System.Collections.Generic.List{System.String})"/>
+            </summary>
+            <param name="data">array of items to convert to JSON array of strings</param>
+            <returns>[ "data[0]", "data[1]",... "data[n]" ]</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONUtil.HasValue(Newtonsoft.Json.Linq.JToken,System.String)">
+            <summary>
+            Helper method to identify whether a JToken contains an entry for a specific named value.
+            </summary>
+            <param name="token"><c>JToken</c> to check</param>
+            <param name="value">name of entry to look for</param>
+            <returns>true if the <c>JToken</c> contains an entry of this name, false otherwise</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.NoAPIResponse">
+            <summary>
+            Class used to identify an API request that provides no actual response. Used for POST requests.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.NoAPIResponse.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance. Constructor ignores the parameter as this should be empty for no-response 
+            requests.
+            </summary>
+            <param name="jsonData">JSON data included in the API response, should be empty</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.ResetSemaphore.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructs a semaphore with an automatic reset thread count. This is used to control Rate Limiting.
+            </summary>
+            <param name="avail">Number of requests that are initially available</param>
+            <param name="max">Maximum number of requests available per timeout period</param>
+            <param name="timeout">Number of milliseconds before thread counts reset</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.ResetSemaphore.Wait">
+            <summary>
+            Call to request entry to the Semaphore
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.RateLimitedRequestHandler">
+            <summary>
+            Helper class used to provide a rate-limiter on API requests.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.RateLimitedRequestHandler.Instance">
+            <summary>
+            Singleton instance for this class - ensures all requests use the same limiter instance.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.RateLimitedRequestHandler.doRequest(System.String,BrimeAPI.com.brimelive.api.BrimeRequestMode,System.String[],System.String)">
+            <summary>
+            Perform the given API request, using the given parameters. This method will wait to ensure that no more then 5 requests
+            are issued per second as per rate limit in API spec. 
+            </summary>
+            <param name="request">full URL for API request</param>
+            <param name="requestMode">request mode (either GET or POST)</param>
+            <param name="postBody">data to use for POST request, generally empty string</param>
+            <returns>processed response to API request</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.SortOrder">
+            <summary>
+            Defines a sorting order when making requests which may retrieve a subset of all available items
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.SortOrderUtil">
+            <summary>
+            Helper methods for working with SortOrder enum.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.SortOrderUtil.GetSortString(BrimeAPI.com.brimelive.api.SortOrder)">
+            <summary>
+            Retrieve the parameter to use in query for sort order
+            </summary>
+            <param name="order">SortOrder to process</param>
+            <returns>"asc" for SortOrder.ASC, otherwise "desc"</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.streams.StreamRequest">
+            <summary>
+            Queries for a stream by the given channel and returns the data for that stream.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.users.TotalUsersRequest.#ctor">
+            v1/users
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.vods.VODState">
+            <summary>
+            TODO: Will be used for <c>BrimeVOD.State</c>
+            Still requires identifying all options for this field.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.VODState.FINISHED">
+            <summary>
+            VOD has completed broadcasting
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.vods.BrimeVOD">
+            <summary>
+            Class <c>BrimeVOD</c> is used to record the details of a single VOD. This record includes information about the original broadcast,
+            as well as when this VOD is scheduled to expire.
+            </summary>
+            <example>Example: <code>
+            "data": {
+                "_id": "60a252ef93689e8e2708c0cd",
+                "channelID": "6056ee164b90bf043002c32d",
+                "vodVideoUrl": "https://content.brimecdn.com/brime-vods/vod/6056ee164b90bf043002c32d/60a252ef93689e8e2708c0cd/hls/chunks_dvr.m3u8",
+                "vodThumbnailUrl": "https://content.brimecdn.com/brime-vods/vod/6056ee164b90bf043002c32d/60a252ef93689e8e2708c0cd/thumbnail",
+                "stream": {
+                    "title": "Brime Api Example",
+                    "category": {
+                        "_id": "606e93525fa50e5780970135",
+                        "genres": [],
+                        "name": "Uncategorized",
+                        "slug": "uncategorized",
+                        "summary": "",
+                        "cover": "https://content.brimecdn.com/brime/category_images/uncategorized.png",
+                        "type": "entertainment"
+                    }
+                },
+                "state": "FINISHED",
+                "startDate": 1621250799105,
+                "endDate": 1621250905273,
+                "expiresAt": 1622460505273
+            }
+            </code></example>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVOD.Logger">
+            <summary>
+            Local NLog logging class.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.ID">
+            <summary>
+            VOD Identifier
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.ChannelID">
+            <summary>
+            Channel ID for the channel which broadcast this VOD
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.VODVideoURL">
+            <summary>
+            URL for the VOD video data
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.VODThumbnailURL">
+            <summary>
+            URL for the VOD thumbnail
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.Stream">
+            <summary>
+            Information about the original broadcast stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.State">
+            <summary>
+            Current state of the VOD (used to identify whether VOD is still currently broadcasting)
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.StartDate">
+            <summary>
+            Identifies when this VOD started broadcasting
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.EndDate">
+            <summary>
+            Identifies when this VOD finished broadcasting
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.ExpiresAt">
+            <summary>
+            Identifies when this VOD will expire from storage and be deleted
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVOD.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Construct a new instance based on the given JSON data
+            </summary>
+            <param name="jsonData">JSON data to process</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo">
+            <summary>
+            <para>Class <c>BrimeVODStreamInfo</c> is used to record the stream information assocated with a VOD record. This item
+            records the Stream Title and Stream Category used when the original stream was broadcast.</para>
+            <example>Example: <code>
+            "stream": {
+                "title": "Brime Api Example",
+                "category": {
+                    "_id": "606e93525fa50e5780970135",
+                    "genres": [],
+                    "name": "Uncategorized",
+                    "slug": "uncategorized",
+                    "summary": "",
+                    "cover": "https://content.brimecdn.com/brime/category_images/uncategorized.png",
+                    "type": "entertainment"
+                }
+            }
+            </code></example>
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ERR_MissingTitle">
+            <summary>
+            Error message when missing Title element in JSON data.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ERR_MisingCategory">
+            <summary>
+            Error message when missing Category element in JSON data.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ID_Title">
+            <summary>
+            ID for Title element when loading/storing to JSON.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ID_Category">
+            <summary>
+            ID for Category element when loading/storing to JSON.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.Logger">
+            <summary>
+            Local NLog logging class.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.Title">
+            <summary>
+            Property <c>Title</c> specifies the Stream Title of the original broadcast.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.Category">
+            <summary>
+            Property <c>Category</c> specifies the Stream Category of the original broadcast.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.#ctor(Newtonsoft.Json.Linq.JToken)">
+            
+             <summary>Construct a new <c>BrimeVODStreamInfo</c> record based on the given JSON response data.</summary>
+             <param name="jsonData"><c>JToken</c> containing the JSON formatted record from API response.</param>
+             <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">Thrown if provided JSON data is missing either <c>title</c> or <c>category</c> elements.</exception>
+            
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ToJSONString">
+            <summary>
+            Convert this record to its equivalent JSON formatted text.
+            </summary>
+            <returns><c>String</c> containing JSON formatted data for this record</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ToString">
+            <summary>
+            Convert this record to a <c>string</c> value suitable for display/logging.
+            </summary>
+            <returns>"BrimeVODStreamInfo: {JSON object}"</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest">
+            <summary>
+            Requests a range of VODs for a particular channel
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest.ChannelName">
+            <summary>
+            Specify the Channel the VODs are associated with
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest.Limit">
+            <summary>
+            Identify how many VODs to return for this request. Default is 50
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest.Skip">
+            <summary>
+            Specify how many VODs to skip before selecting the set to return. Allows paging through the 
+            list of VODs. TODO: Identify whether Skip is counted in individual VODs or in multiples of Limit
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest.Sort">
+            <summary>
+            Defines the order to sort the VODs before selecting the set to return. With DESC default, will return the
+            latest 50 VODs, while if set to ASC, will return the oldest 50 VODs.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest.#ctor(System.String)">
+            <summary>
+            Create a new instance of this request, for the specified channel.
+            </summary>
+            <param name="channelName">Specify the Channel to request VODs from</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest.getResponse">
+            <summary>
+            Retrieve the list of VODs for this request. 
+            </summary>
+            <returns>List of <c>BrimeVOD</c> entries, between 0 and <c>Limit</c> items</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.vods.VodInfoRequest">
+            <summary>
+            Requests information on a specific VOD.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.VodInfoRequest.VOD_INFO_REQUEST">
+            <summary>
+            Get Vod Info: /v1/vod/:vodId <br />
+            vodId - ID for the VOD to retrieve
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.VodInfoRequest.VodID">
+            <summary>
+            Identifies the Vod ID being requested
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.VodInfoRequest.#ctor(System.String)">
+            <summary>
+            Create a new request for the specified VOD ID
+            </summary>
+            <param name="vodID">ID of the VOD being requested</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.VodInfoRequest.getResponse">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

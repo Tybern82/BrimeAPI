@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BrimeAPI.com.brimelive.api.errors;
 
 namespace BrimeAPI.com.brimelive.api.emotes {
     public class ChannelEmotesRequest : BrimeAPIRequest<ChannelEmotesResponse> {
