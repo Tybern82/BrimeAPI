@@ -125,6 +125,7 @@ namespace BrimeAPI.Test {
 
             Logger.Info("Checks complete");
 
+            Console.WriteLine("Press <return> to close...");
             Console.ReadLine().Trim();
         }
     }

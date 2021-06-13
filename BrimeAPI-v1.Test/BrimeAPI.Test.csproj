@@ -66,7 +66,7 @@
     <None Include="Test.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BrimeAPIv1\BrimeAPI-v1.csproj">
+    <ProjectReference Include="..\BrimeAPI-v1\BrimeAPI-v1.csproj">
       <Project>{9BBBF170-32A5-4012-B96D-09C5772A361F}</Project>
       <Name>BrimeAPI-v1</Name>
     </ProjectReference>
