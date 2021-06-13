@@ -1,0 +1,27 @@
+{
+  "data": {
+    "_id": "607e67f1fb94b3cba84e80fb",
+    "url": "https://clips.brimelive.com/607e67f1fb94b3cba84e80fb",
+    "clipName": "Clipped by ItzLcyx",
+    "clipDate": 1618896882,
+    "clipVideoUrl": "https://content.brimecdn.com/brime/clip/6050a4804b90bf0430aec1e2/607e67f1fb94b3cba84e80fb",
+    "clipThumbnailUrl": "https://content.brimecdn.com/brime/clip/6050a4804b90bf0430aec1e2/607e67f1fb94b3cba84e80fb/thumbnail",
+    "channelID": "6050a4804b90bf0430aec1e2",
+    "stream": {
+      "title": "EXPERIMENTAL 120 FPS Stream",
+      "category": {
+        "_id": "606e8e43eb4c916b74360542",
+        "igdb_id": 126459,
+        "genres": [ "60568f1d5631c93404fe2eef", "60568f1d5631c93404fe2efa" ],
+        "name": "VALORANT",
+        "slug": "valorant",
+        "summary": "Imagine this: tactical shooter meets hypernatural powers. Everyone’s got guns and a unique set of abilities, so how do you beat someone with the speed of wind? Use your own moves to outplay them and beat them to the shot. VALORANT is a game for bold strategists who dare to make the unexpected play, because if it wins, it works.",
+        "cover": "https://images.igdb.com/igdb/image/upload/t_1080p/co2mvt.png",
+        "type": "videogame"
+      }
+    },
+    "sectionStart": 1618896852,
+    "sectionEnd": 1618896882,
+    "upvotes": 1
+  }
+}

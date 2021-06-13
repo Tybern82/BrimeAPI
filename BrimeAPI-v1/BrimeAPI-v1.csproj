@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9BBBF170-32A5-4012-B96D-09C5772A361F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BrimeAPI</RootNamespace>
+    <AssemblyName>BrimeAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>BrimeAPIDoc.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>BrimeAPIDoc.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IO.Ably, Version=1.2.4.0, Culture=neutral, PublicKeyToken=70c9e5c3d2c68b16, processorArchitecture=MSIL">
+      <HintPath>..\packages\ably.io.1.2.4\lib\net46\IO.Ably.dll</HintPath>
+    </Reference>
+    <Reference Include="IO.Ably.DeltaCodec, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ably.io.1.2.4\lib\net46\IO.Ably.DeltaCodec.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.9\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Threading.Channels, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Channels.4.6.0\lib\netstandard2.0\System.Threading.Channels.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="com\brimelive\api\BrimeAPI.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIError.cs" />
+    <Compile Include="com\brimelive\api\BrimeAPIRequest.cs" />
+    <Compile Include="com\brimelive\api\BrimeAPIResponse.cs" />
+    <Compile Include="com\brimelive\api\categories\BrimeCategory.cs" />
+    <Compile Include="com\brimelive\api\categories\CategoryRequest.cs" />
+    <Compile Include="com\brimelive\api\categories\LiveCategoriesRequest.cs" />
+    <Compile Include="com\brimelive\api\categories\LivestreamsByCategoryRequest.cs" />
+    <Compile Include="com\brimelive\api\channels\BrimeChannel.cs" />
+    <Compile Include="com\brimelive\api\channels\BrimeSubscription.cs" />
+    <Compile Include="com\brimelive\api\channels\ChannelExistsRequest.cs" />
+    <Compile Include="com\brimelive\api\channels\ChannelRequest.cs" />
+    <Compile Include="com\brimelive\api\channels\ChannelSubscriptionRequest.cs" />
+    <Compile Include="com\brimelive\api\clips\BrimeClip.cs" />
+    <Compile Include="com\brimelive\api\clips\ChannelClipsRequest.cs" />
+    <Compile Include="com\brimelive\api\clips\ClipInfoRequest.cs" />
+    <Compile Include="com\brimelive\api\clips\CreateClipRequest.cs" />
+    <Compile Include="com\brimelive\api\emotes\BrimeEmote.cs" />
+    <Compile Include="com\brimelive\api\emotes\BrimeEmoteSet.cs" />
+    <Compile Include="com\brimelive\api\emotes\ChannelEmotesRequest.cs" />
+    <Compile Include="com\brimelive\api\emotes\EmoteSetRequest.cs" />
+    <Compile Include="com\brimelive\api\emotes\GlobalEmotesRequest.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIException.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIInternalError.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIInvalidChannel.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIInvalidClientID.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMalformedResponse.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMissingAccess.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMissingParameter.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIMissingScope.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPINotImplemented.cs" />
+    <Compile Include="com\brimelive\api\errors\BrimeAPIRateLimitExceeded.cs" />
+    <Compile Include="com\brimelive\api\JSONUtil.cs" />
+    <Compile Include="com\brimelive\api\NoAPIResponse.cs" />
+    <Compile Include="com\brimelive\api\RateLimitedRequestHandler.cs" />
+    <Compile Include="com\brimelive\api\realtime\AblyLogHandler.cs" />
+    <Compile Include="com\brimelive\api\realtime\BrimeChatMessage.cs" />
+    <Compile Include="com\brimelive\api\realtime\BrimeRealtimeAPI.cs" />
+    <Compile Include="com\brimelive\api\realtime\BrimeRealtimeListener.cs" />
+    <Compile Include="com\brimelive\api\realtime\TracedBrimeListener.cs" />
+    <Compile Include="com\brimelive\api\realtime\ViewCountTracker.cs" />
+    <Compile Include="com\brimelive\api\SortOrder.cs" />
+    <Compile Include="com\brimelive\api\streams\BrimeStream.cs" />
+    <Compile Include="com\brimelive\api\streams\LiveStreamsRequest.cs" />
+    <Compile Include="com\brimelive\api\streams\StreamRequest.cs" />
+    <Compile Include="com\brimelive\api\users\BrimeUser.cs" />
+    <Compile Include="com\brimelive\api\users\TotalUsersRequest.cs" />
+    <Compile Include="com\brimelive\api\users\UserClipsRequest.cs" />
+    <Compile Include="com\brimelive\api\users\UserFollowingRequest.cs" />
+    <Compile Include="com\brimelive\api\users\UserRequest.cs" />
+    <Compile Include="com\brimelive\api\vods\BrimeVOD.cs" />
+    <Compile Include="com\brimelive\api\vods\ChannelVodsRequest.cs" />
+    <Compile Include="com\brimelive\api\vods\VodInfoRequest.cs" />
+    <Compile Include="Nullable\AllowNullAttribute.cs" />
+    <Compile Include="Nullable\DisallowNullAttribute.cs" />
+    <Compile Include="Nullable\DoesNotReturnAttribute.cs" />
+    <Compile Include="Nullable\DoesNotReturnIfAttribute.cs" />
+    <Compile Include="Nullable\MaybeNullAttribute.cs" />
+    <Compile Include="Nullable\MaybeNullWhenAttribute.cs" />
+    <Compile Include="Nullable\MemberNotNullAttribute.cs" />
+    <Compile Include="Nullable\MemberNotNullWhenAttribute.cs" />
+    <Compile Include="Nullable\NotNullAttribute.cs" />
+    <Compile Include="Nullable\NotNullIfNotNullAttribute.cs" />
+    <Compile Include="Nullable\NotNullWhenAttribute.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Test.json" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

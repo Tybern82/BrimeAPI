@@ -1,0 +1,45 @@
+{
+  "data": {
+    "streams": [
+      {
+        "_id": "6050a4804b90bf0430aec1e2",
+        "channel": "Geeken",
+        "category": {
+          "_id": "606e971feb4c916b74368a1c",
+          "igdb_id": 137001,
+          "genres": [ "60568f1d5631c93404fe2eef" ],
+          "name": "Call of Duty: Black Ops Cold War",
+          "slug": "call-of-duty-black-ops-cold-war",
+          "summary": "The iconic Black Ops series is back with Call of Duty®: Black Ops Cold War – the direct sequel to the original and fan-favorite Call of Duty®: Black Ops. \n \nBlack Ops Cold War will drop fans into the depths of the Cold War’s volatile geopolitical battle of the early 1980s. Nothing is ever as it seems in a gripping single-player Campaign, where players will come face-to-face with historical figures and hard truths, as they battle around the globe through iconic locales like East Berlin, Vietnam, Turkey, Soviet KGB headquarters and more. \n \nAs elite operatives, you will follow the trail of a shadowy figure named Perseus who is on a mission to destabilize the global balance of power and change the course of history. Descend into the dark center of this global conspiracy alongside iconic characters Woods, Mason and Hudson and a new cast of operatives attempting to stop a plot decades in the making. \n \nBeyond the Campaign, players will bring a Cold War arsenal of weapons and equipment into the next generation of Multiplayer and Zombies experiences. \n \nWelcome to the brink. Welcome to Call of Duty®: Black Ops Cold War.",
+          "cover": "https://images.igdb.com/igdb/image/upload/t_1080p/co2n6j.png",
+          "type": "videogame"
+        },
+        "title": "Gaming.",
+        "isLive": true,
+        "publishTime": 1623054787000,
+        "streams": [
+          {
+            "bandwidth": 8149063,
+            "resolution": "1920x1080",
+            "vcodec": "avc1.64002a",
+            "acodec": "mp4a.40.2",
+            "protocol": "RTMP",
+            "isSource": true
+          }
+        ],
+        "broadcastingUser": {
+          "_id": "603b901b0a8fe286fc6f1229",
+          "username": "geeken",
+          "displayname": "Geeken",
+          "avatar": "https://content.brimecdn.com/brime/user/603b901b0a8fe286fc6f1229/avatar?v=1623055234987",
+          "badges": [ "https://beta.brimelive.com/brime_verified.png", "https://content.brimecdn.com/brime/badges/BrimePro.png" ],
+          "roles": [ "admin" ],
+          "color": "#00aaff",
+          "isBrimePro": true,
+          "extendedVodsEnabled": false
+        },
+        "streamThumbnailUrl": "https://content.brimecdn.com/live/6050a4804b90bf0430aec1e2/thumbnail.jpg"
+      }
+    ]
+  }
+}
