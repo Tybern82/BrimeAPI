@@ -1181,6 +1181,15 @@
         <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.ToString">
             <inheritdoc />
         </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.getImageURL(System.String,BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSize)">
+            <summary>
+            Used to retrieve the Image URL. This method is public to allow both access from the BrimeEmote class itself, as well
+            as remotely when loading emotes for BrimeChatEmote (which only includes the name).
+            </summary>
+            <param name="name">name of the emote to get a link to</param>
+            <param name="sz">size of the emote to retreive</param>
+            <returns>https://content.brimecdn.com/brime/emote/:Name:/:Size:</returns>
+        </member>
         <member name="T:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet">
             <summary>
             Specify a collection of emotes 

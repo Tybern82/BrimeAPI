@@ -72,20 +72,31 @@ namespace BrimeAPI.com.brimelive.api.emotes {
         /// <param name="sz">size of the emote to retrieve</param>
         /// <returns>URL for emote at this size</returns>
         public string getImageURL(BrimeEmoteSize sz) {
-            string URLFormat = "https://content.brimecdn.com/brime/emote/{0}/{1}";
-            return string.Format(URLFormat, new string[] { Name, getSize(sz) });
+            return getImageURL(Name, sz);
         }
-
-        private string getSize(BrimeEmoteSize sz) => sz switch {
-            BrimeEmoteSize.X3 => "x3",
-            BrimeEmoteSize.X2 => "x2",
-            _ => "x1",
-        };
 
         /// <inheritdoc />
         public override string ToString() {
             return "EMOTE<" + ID + ": " + Name + ">";
         }
+
+        /// <summary>
+        /// Used to retrieve the Image URL. This method is public to allow both access from the BrimeEmote class itself, as well
+        /// as remotely when loading emotes for BrimeChatEmote (which only includes the name).
+        /// </summary>
+        /// <param name="name">name of the emote to get a link to</param>
+        /// <param name="sz">size of the emote to retreive</param>
+        /// <returns>https://content.brimecdn.com/brime/emote/:Name:/:Size:</returns>
+        public static string getImageURL(string name, BrimeEmoteSize sz) {
+            string URLFormat = "https://content.brimecdn.com/brime/emote/{0}/{1}";
+            return string.Format(URLFormat, new string[] { name, getSize(sz) });
+        }
+
+        private static string getSize(BrimeEmoteSize sz) => sz switch {
+            BrimeEmoteSize.X3 => "x3",
+            BrimeEmoteSize.X2 => "x2",
+            _ => "x1",
+        };
     }
 }
 
