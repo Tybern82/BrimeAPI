@@ -2,15 +2,26 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrimeAPI.com.brimelive.api.errors;
 using IO.Ably;
 using IO.Ably.Realtime;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.realtime {
+    /// <summary>
+    /// Used to access realtime streaming information (ie Chat messages, new follower/subscribers, etc)
+    /// </summary>
     public class BrimeRealtimeAPI {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private static readonly string ABLY_TOKEN = "TTKZpg.6NfkQA:gAXhL8RYoA8iQ2o7";
-        public static readonly int VIEW_UPDATE = 300000;        // re-sync viewer count every 5 minutes (realtime updated by ENTER/LEAVE messages)
+
+        /// <summary>
+        /// Identify how often to sync the viewer count. Count is updated in realtime using ENTER/LEAVE messages.
+        /// When this timer expires, API will try to retrieve current count directly to ensure no message has been 
+        /// missed leading to an incorrect count. 
+        /// </summary>
+        private static readonly int VIEW_UPDATE = 300000;        // re-sync viewer count every 5 minutes (realtime updated by ENTER/LEAVE messages)
 
         private readonly AblyRealtime ably;
 
@@ -18,8 +29,16 @@ namespace BrimeAPI.com.brimelive.api.realtime {
 
         private bool isConnected = false;
 
+        /// <summary>
+        /// Retrieve the Viewer counter tracker (implemented as a listener for ENTER/LEAVE messages)
+        /// </summary>
         public ViewCountTracker ViewCountTracker { get; private set; }
 
+        /// <summary>
+        /// Create a new instance for the given channel ID / name. Will assume parameter is ID if 
+        /// there is a Client-ID set, or will assume a channel Name if no ID present.
+        /// </summary>
+        /// <param name="channelID">ID (or name) of channel to connect to</param>
         public BrimeRealtimeAPI(string channelID) {
             ClientOptions options = new ClientOptions(ABLY_TOKEN) {
                 AutoConnect = false,
@@ -125,9 +144,13 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                             Logger.Trace("Message Data: " + message.Data);
                             string msg = (string)message.Data;
                             JObject data = JObject.Parse(msg);
-                            BrimeChatMessage chatMessage = new BrimeChatMessage(data);
-                            foreach (BrimeRealtimeListener l in listeners) 
-                                l.onChat(chatMessage);
+                            try {
+                                BrimeChatMessage chatMessage = new BrimeChatMessage(data);
+                                foreach (BrimeRealtimeListener l in listeners)
+                                    l.onChat(chatMessage);
+                            } catch (BrimeAPIMalformedResponse e) {
+                                Logger.Error(e.ToString());
+                            }
                             break;
 
                         case "delete":
@@ -212,8 +235,12 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                     // onChat
                     if (message.Name == "greeting") {
                         Logger.Trace("Message Data: " + message.Data);
-                        BrimeChatMessage chatMessage = new BrimeChatMessage(JObject.Parse((string)message.Data));
-                        foreach (BrimeRealtimeListener listener in listeners) listener.onChat(chatMessage);
+                        try {
+                            BrimeChatMessage chatMessage = new BrimeChatMessage(JObject.Parse((string)message.Data));
+                            foreach (BrimeRealtimeListener listener in listeners) listener.onChat(chatMessage);
+                        } catch (BrimeAPIMalformedResponse e) {
+                            Logger.Error(e.ToString());
+                        }
                     } else {
                         Logger.Trace("Message Name: " + message.Name);
                     }
@@ -221,20 +248,35 @@ namespace BrimeAPI.com.brimelive.api.realtime {
             }
         }
 
+        /// <summary>
+        /// Used to register a new listener instance with this connection.
+        /// </summary>
+        /// <param name="realtimeListener">listener to attach</param>
         public void registerListener(BrimeRealtimeListener realtimeListener) {
             if (listeners.Contains(realtimeListener)) listeners.Remove(realtimeListener);
             listeners.Add(realtimeListener);
         }
 
+        /// <summary>
+        /// Used to remove an existing listener so it will stop receiving events from this
+        /// connection.
+        /// </summary>
+        /// <param name="realtimeListener">listener to remove</param>
         public void removeListener(BrimeRealtimeListener realtimeListener) {
             if (listeners.Contains(realtimeListener)) listeners.Remove(realtimeListener);
         }
 
+        /// <summary>
+        /// Used to activate connection.
+        /// </summary>
         public void connect() {
             Logger.Trace("Connecting to Brime Realtime");
             this.ably.Connect();
         }
 
+        /// <summary>
+        /// Used to close this connection
+        /// </summary>
         public void close() {
             Logger.Trace("Disconnecting from Brime Realtime");
             this.ably.Close();
@@ -242,25 +284,3 @@ namespace BrimeAPI.com.brimelive.api.realtime {
     }
 }
 
-/*
-need to use the new ably endpoint, "channelId/chat"
-here's the new payloads schema for the new endpoint:
-chat:
-{
-  _id: String,
-  channelID: String,
-  sender: User,
-  message: String,
-  richContents: String, // Used by brimebot.
-  emotes: Emote[],
-  timestamp: Number
-}
-
-delete:
-{
-  _id: String,
-  messageID: String
-}
-[3:48 AM]
-use the ably name field to get the type of message
-*/

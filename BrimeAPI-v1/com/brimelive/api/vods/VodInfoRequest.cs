@@ -13,7 +13,7 @@ namespace BrimeAPI.com.brimelive.api.vods {
         /// Get Vod Info: /v1/vod/:vodId <br />
         /// vodId - ID for the VOD to retrieve
         /// </summary>
-        private static readonly string VOD_INFO_REQUEST = "/v1/vod/{0}";
+        private static readonly string VOD_INFO_REQUEST = "/vod/{0}";
 
         /// <summary>
         /// Identifies the Vod ID being requested

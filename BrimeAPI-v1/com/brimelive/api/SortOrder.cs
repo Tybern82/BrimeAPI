@@ -10,8 +10,14 @@ namespace BrimeAPI.com.brimelive.api {
     /// Defines a sorting order when making requests which may retrieve a subset of all available items
     /// </summary>
     public enum SortOrder {
-        ASC,    // Oldest->Newest
-        DESC    // Newest->Oldest
+        /// <summary>
+        /// Sort responses from oldest to newest
+        /// </summary>
+        ASC,
+        /// <summary>
+        /// SOrt responses from newest to oldest
+        /// </summary>
+        DESC
     }
 
     /// <summary>
@@ -24,11 +30,9 @@ namespace BrimeAPI.com.brimelive.api {
         /// </summary>
         /// <param name="order">SortOrder to process</param>
         /// <returns>"asc" for SortOrder.ASC, otherwise "desc"</returns>
-        public static string GetSortString(this SortOrder order) {
-            return order switch {
-                SortOrder.ASC => "asc",
-                _ => "desc",
-            };
-        }
+        public static string GetSortString(this SortOrder order) => order switch {
+            SortOrder.ASC => "asc",
+            _ => "desc",
+        };
     }
 }

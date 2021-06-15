@@ -1,19 +1,26 @@
 ﻿#nullable enable
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using BrimeAPI.com.brimelive.api.errors;
+using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.emotes {
-    public class ChannelEmotesRequest : BrimeAPIRequest<ChannelEmotesResponse> {
+    /// <summary>
+    /// Query for list of emotes associated with the given channel
+    /// </summary>
+    public class ChannelEmotesRequest : BrimeAPIRequest<List<BrimeEmote>> {
 
-        private static string GET_CHANNEL_EMOTES_REQUEST = "/channel/{0}/emotes"; // "/channel/:channel/emotes"
+        private static readonly string GET_CHANNEL_EMOTES_REQUEST = "/channel/{0}/emotes"; // "/channel/:channel/emotes"
 
+        /// <summary>
+        /// Channel to request (appears to support both name and ID)
+        /// </summary>
         public string ChannelID { get; set; }
 
-        public ChannelEmotesRequest() : this("") { }
-
+        /// <summary>
+        /// Create a new request for the given channel (appears to support both ID and name)
+        /// </summary>
+        /// <param name="ID">ID / Name of channel to request</param>
         public ChannelEmotesRequest(string ID) : base(GET_CHANNEL_EMOTES_REQUEST) {
             ChannelID = ID;
             this.RequestParameters = (() => {
@@ -21,22 +28,16 @@ namespace BrimeAPI.com.brimelive.api.emotes {
             });
         }
 
-        public override ChannelEmotesResponse getResponse() {
-            return new ChannelEmotesResponse(doRequest());
-        }
-    }
-
-    public class ChannelEmotesResponse {
-
-        public BrimeEmoteSet EmoteSet { get; private set; }
-
-        public ChannelEmotesResponse(BrimeAPIResponse response) {
-            try {
-                // TODO: Check structure of API response - no current example
-                EmoteSet = new BrimeEmoteSet(response.Data);
-            } catch (Exception e) {
-                throw new BrimeAPIMalformedResponse(e.ToString());
+        /// <inheritdoc />
+        public override List<BrimeEmote> getResponse() {
+            BrimeAPIResponse response = doRequest();
+            BrimeAPIError.ThrowException(response);
+            JArray? emotes = response.Data.Value<JArray>("emotes");
+            List<BrimeEmote> Emotes = new List<BrimeEmote>((emotes == null) ? 0 : emotes.Count);
+            if (emotes != null) {
+                foreach (JToken emote in emotes) Emotes.Add(new BrimeEmote(emote));
             }
+            return Emotes;
         }
     }
 }

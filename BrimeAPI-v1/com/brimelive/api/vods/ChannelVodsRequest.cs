@@ -11,7 +11,7 @@ namespace BrimeAPI.com.brimelive.api.vods {
     /// </summary>
     public class ChannelVodsRequest : BrimeAPIRequest<List<BrimeVOD>> {
 
-        private static readonly string GET_VODS_FOR_CHANNEL_REQUEST = "/v1/channel/{0}/vods?limit={1}&skip={2}&sort={3}";    // /v1/channel/:channelId/vods
+        private static readonly string GET_VODS_FOR_CHANNEL_REQUEST = "/channel/{0}/vods";    // /v1/channel/:channelId/vods
 
         /// <summary>
         /// Specify the Channel the VODs are associated with
@@ -52,11 +52,16 @@ namespace BrimeAPI.com.brimelive.api.vods {
             this.ChannelName = channelName;
             this.RequestParameters = (() => {
                 return new string[] { 
-                    ChannelName,
-                    Limit.ToString(),
-                    Skip.ToString(),
-                    Sort.GetSortString()
+                    ChannelName
                 };
+            });
+            this.QueryParameters = (() => {
+                List<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
+                // Add in parameters if they are not default
+                if (Limit != 50) queryParams.Add(new KeyValuePair<string, string>("limit", Limit.ToString()));
+                if (Skip != 0) queryParams.Add(new KeyValuePair<string, string>("skip", Skip.ToString()));
+                if (Sort != SortOrder.DESC) queryParams.Add(new KeyValuePair<string, string>("sort", Sort.GetSortString()));
+                return queryParams.ToArray();
             });
         }
 
@@ -68,7 +73,7 @@ namespace BrimeAPI.com.brimelive.api.vods {
             BrimeAPIResponse response = doRequest();
             BrimeAPIError.ThrowException(response);
             List<BrimeVOD> _result;
-            JArray? vods = response.Data.Value<JArray>("streams");
+            JArray? vods = response.Data.Value<JArray>("vods");
             if (vods != null) {
                 _result = new List<BrimeVOD>(vods.Count);
                 foreach (JToken item in vods) {

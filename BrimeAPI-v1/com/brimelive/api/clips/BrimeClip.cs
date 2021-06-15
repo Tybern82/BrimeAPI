@@ -2,8 +2,8 @@
 
 using System;
 using System.Text;
-using BrimeAPI.com.brimelive.api.categories;
 using BrimeAPI.com.brimelive.api.errors;
+using BrimeAPI.com.brimelive.api.streams;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.clips {
@@ -92,22 +92,32 @@ namespace BrimeAPI.com.brimelive.api.clips {
             if (curr == null) throw new BrimeAPIMalformedResponse("Missing Thumbnail URL in clip response");
             ClipThumbnailURL = new Uri(curr);
 
-            long clipDate = jsonData.Value<long>("clipDate");
-            ClipDate = DateTimeOffset.FromUnixTimeSeconds(clipDate).DateTime;
-
             curr = jsonData.Value<string>("channelID");
             if (curr == null) throw new BrimeAPIMalformedResponse("Missing Channel ID in clip response");
             ChannelID = curr;
 
             JToken? stream = jsonData.Value<JToken>("stream");
             if (stream == null) throw new BrimeAPIMalformedResponse("Missing stream information in clip response");
+
             Stream = new StreamDetails(stream);
+
+            Upvotes = jsonData.Value<int>("upvotes");
+
+            // TODO: Update when timestamp changes to milliseconds
+            // Ensure toJSON is also updated
+
+            long clipDate = jsonData.Value<long>("clipDate");
+            ClipDate = DateTimeOffset.FromUnixTimeSeconds(clipDate).DateTime;
+            // ClipDate = DateTimeOffset.FromUnixTimeMilliseconds(clipDate).DateTime;
+
 
             long sectionStart = jsonData.Value<long>("sectionStart");
             SectionStart = DateTimeOffset.FromUnixTimeSeconds(sectionStart).DateTime;
+            // SectionStart = DateTimeOffset.FromUnixTimeMilliseconds(sectionStart).DateTime;
 
             long sectionEnd = jsonData.Value<long>("sectionEnd");
             SectionEnd = DateTimeOffset.FromUnixTimeSeconds(sectionEnd).DateTime;
+            // SectionEnd = DateTimeOffset.FromUnixTimeMilliseconds(sectionEnd).DateTime;
 
             Upvotes = jsonData.Value<int>("upvotes");
         }
@@ -116,61 +126,20 @@ namespace BrimeAPI.com.brimelive.api.clips {
         public string toJSON() {
             StringBuilder _result = new StringBuilder();
             _result.Append("{")
-                .Append(ID.toJSON("_id"))
-                .Append(URL.AbsoluteUri.toJSON("url"))
-                .Append(ClipName.toJSON("clipName"))
-                .Append(ClipVideoURL.AbsoluteUri.toJSON("clipVideoUrl"))
-                .Append(ClipThumbnailURL.AbsoluteUri.toJSON("clipThumbnailUrl"))
-                .Append(new DateTimeOffset(ClipDate).ToUnixTimeSeconds().toJSON("clipDate"))
-                .Append(ChannelID.toJSON("channelID"))
-                .Append(Stream.toJSON("stream"))
-                .Append(new DateTimeOffset(SectionStart).ToUnixTimeSeconds().toJSON("sectionStart"))
-                .Append(new DateTimeOffset(SectionEnd).ToUnixTimeSeconds().toJSON("sectionEnd"))
+                .Append(ID.toJSON("_id")).Append(", ")
+                .Append(URL.AbsoluteUri.toJSON("url")).Append(", ")
+                .Append(ClipName.toJSON("clipName")).Append(", ")
+                .Append(ClipVideoURL.AbsoluteUri.toJSON("clipVideoUrl")).Append(", ")
+                .Append(ClipThumbnailURL.AbsoluteUri.toJSON("clipThumbnailUrl")).Append(", ")
+                .Append(new DateTimeOffset(ClipDate).ToUnixTimeSeconds().toJSON("clipDate")).Append(", ")
+                // .Append(new DateTimeOffset(ClipDate).ToUnixTimeMilliseconds().toJSON("clipDate"))
+                .Append(ChannelID.toJSON("channelID")).Append(", ")
+                .Append(Stream.toJSON("stream")).Append(", ")
+                .Append(new DateTimeOffset(SectionStart).ToUnixTimeSeconds().toJSON("sectionStart")).Append(", ")
+                .Append(new DateTimeOffset(SectionEnd).ToUnixTimeSeconds().toJSON("sectionEnd")).Append(", ")
+                // .Append(new DateTimeOffset(SectionStart).ToUnixTimeMilliseconds().toJSON("sectionStart"))
+                // .Append(new DateTimeOffset(SectionEnd).ToUnixTimeMilliseconds().toJSON("sectionEnd"))
                 .Append(Upvotes.toJSON("upvotes"))
-                .Append("}");
-            return _result.ToString();
-        }
-
-        /// <inheritdoc />
-        public override string ToString() {
-            return toJSON();
-        }
-    }
-
-    /// <summary>
-    /// Contains the stream information for the stream where the clip was taken
-    /// </summary>
-    public class StreamDetails : JSONConvertable {
-        /// <summary>
-        /// Category the original stream was broadcast under
-        /// </summary>
-        public BrimeCategory Category { get; private set; }
-
-        /// <summary>
-        /// Original title of the stream
-        /// </summary>
-        public string Title { get; private set; }
-
-        /// <summary>
-        /// Create a new instance based on the given JSON data
-        /// </summary>
-        /// <param name="jsonData">JSON data to process</param>
-        public StreamDetails(JToken jsonData) {
-            string? curr = jsonData.Value<string>("title");
-            if (curr == null) throw new BrimeAPIMalformedResponse("Missing title in stream information for clip");
-            Title = curr;
-
-            JToken? category = jsonData.Value<JToken>("category");
-            if (category == null) throw new BrimeAPIMalformedResponse("Missing category in stream information for clip");
-            Category = new BrimeCategory(category);
-        }
-
-        /// <inheritdoc />
-        public string toJSON() {
-            StringBuilder _result = new StringBuilder();
-            _result.Append("{")
-                .Append(Title.toJSON("title"))
-                .Append(Category.toJSON("category"))
                 .Append("}");
             return _result.ToString();
         }

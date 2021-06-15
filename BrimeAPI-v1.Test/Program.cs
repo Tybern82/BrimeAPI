@@ -4,10 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrimeAPI.com.brimelive.api.categories;
 using BrimeAPI.com.brimelive.api.channels;
 using BrimeAPI.com.brimelive.api.clips;
+using BrimeAPI.com.brimelive.api.emotes;
 using BrimeAPI.com.brimelive.api.streams;
 using BrimeAPI.com.brimelive.api.users;
+using BrimeAPI.com.brimelive.api.vods;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.Test {
@@ -111,14 +114,125 @@ namespace BrimeAPI.Test {
 
             Logger.Info("Checking ChannelClipsRequest");
             try {
-                ChannelClipsRequest req = new ChannelClipsRequest(channelName);
-                req.Limit = 5;
+                ChannelClipsRequest req = new ChannelClipsRequest(channelName) {
+                    Limit = 5
+                };
                 List<BrimeClip> clips = req.getResponse();
                 Logger.Info("Detected " + clips.Count + "/5 clips");
                 foreach (BrimeClip clip in clips) {
                     Logger.Info("Detected clip <" + clip.ClipName + "> made on " + clip.ClipDate);
                     Logger.Trace(clip.ToString());
                 }
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            string vodID = "60c49720d73886e6de6bc554";   // Finished
+            Logger.Info("Checking VodInfoRequest");
+            try {
+                VodInfoRequest req = new VodInfoRequest(vodID);
+                BrimeVOD vod = req.getResponse();
+                Logger.Info("Detected VOD from " + vod.StartDate + " on channel " + vod.Channel.ChannelName);
+                if (vod.State == VODState.FINISHED) Logger.Info("Finish time: " + vod.EndDate);
+                Logger.Trace(vod.toJSON());
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            Logger.Info("Checking ChannelVodsRequest");
+            try {
+                ChannelVodsRequest req = new ChannelVodsRequest(channelName) {
+                    Limit = 5
+                };
+                List<BrimeVOD> vods = req.getResponse();
+                foreach (BrimeVOD vod in vods) {
+                    Logger.Info("Detected VOD from " + vod.StartDate + " on channel " + vod.Channel.ChannelName);
+                    if (vod.State == VODState.FINISHED) Logger.Info("Finish time: " + vod.EndDate);
+                }
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            string testCategory = "uncategorized";
+            Logger.Info("Checking LiveCategoriesRequest");
+            try {
+                LiveCategoriesRequest req = new LiveCategoriesRequest();
+                List<CategoryStreams> live = req.getResponse();
+                List<string> names = new List<string>();
+                int count = 0;
+                Random r = new Random();
+                foreach (CategoryStreams cat in live) {
+                    names.Add(cat.Category.Name);
+                    // Select largest category, randomly select between categories of same size
+                    if ((cat.Streams.Count > count) || ((cat.Streams.Count == count) && (r.Next(2) == 1))) {
+                        testCategory = cat.Category.ID;
+                        count = cat.Streams.Count;
+                    }
+                }
+                Logger.Info("Currently live streams in: " + string.Join(", ", names));
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            Logger.Info("Checking LivestreamsByCategoryRequest");
+            try {
+                LivestreamsByCategoryRequest req = new LivestreamsByCategoryRequest(testCategory);
+                CategoryStreams live = req.getResponse();
+                Logger.Info("Found " + live.Streams.Count + " streams currently under " + live.Category.Name);
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            Logger.Info("Checking CategoryRequest");
+            try {
+                CategoryRequest req = new CategoryRequest(testCategory);
+                BrimeCategory cat = req.getResponse();
+                Logger.Info("Checking category " + cat.Name + " in group " + cat.Type);
+                Logger.Info(cat.Summary);
+                Logger.Trace(cat.toJSON());
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            Logger.Info("Checking GlobalEmotesRequest");
+            try {
+                GlobalEmotesRequest req = new GlobalEmotesRequest();
+                List<BrimeEmoteSet> sets = req.getResponse();
+                foreach (BrimeEmoteSet eset in sets) {
+                    List<string> emotes = new List<string>();
+                    foreach (BrimeEmote e in eset.Emotes) emotes.Add(e.Name);
+                    Logger.Info("Global Emote Set <" + eset.Name + ">: " + string.Join(", ", emotes));
+                }
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
+            /* Appears that this endpoint is not currently operational? Returning Internal Server Error
+             * Have tried both the set ID from API doc (which appears to be global emote set, and set ID
+             * returned from channel request (geeken).
+            string emoteID = "607b681d05cac13b60fe161c";
+            Logger.Info("Checking EmoteSetRequest");
+            try {
+                EmoteSetRequest req = new EmoteSetRequest(emoteID);
+                BrimeEmoteSet eset = req.getResponse();
+                List<string> emotes = new List<string>();
+                foreach (BrimeEmote e in eset.Emotes) emotes.Add(e.Name);
+                Logger.Info("Emote Set <" + eset.Name + ">: " + string.Join(", ", emotes));
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+            */
+            Logger.Info("Skipping checks for EmoteSetRequest - appears to be a server error with this endpoint");
+
+            Logger.Info("Checking ChannelEmotesRequest");
+            try {
+                ChannelEmotesRequest req = new ChannelEmotesRequest(channelName);
+                List<BrimeEmote> eset = req.getResponse();
+                List<string> emotes = new List<string>();
+                foreach (BrimeEmote e in eset) {
+                    emotes.Add(e.Name);
+                }
+                Logger.Info("Emotes for <" + channelName + ">: " + string.Join(", ", emotes));
             } catch (Exception e) {
                 Logger.Error(e.ToString());
             }

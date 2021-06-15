@@ -22,7 +22,7 @@ namespace BrimeAPI.com.brimelive.api.channels {
         public static readonly string GET_CHANNEL_REQUEST = "/channel/{0}";    // /v1/channel/:channel
 
         /// <summary>
-        /// Identifies the name of the channel to request information on.
+        /// Identifies the name of the channel to request information on. Will accept both Channel Name and Channel ID.
         /// </summary>
         public string ChannelName { get; private set; }
 

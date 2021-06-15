@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using BrimeAPI.com.brimelive.api.categories;
 using BrimeAPI.com.brimelive.api.users;
+using BrimeAPI.com.brimelive.api.errors;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -58,7 +59,7 @@ namespace BrimeAPI.com.brimelive.api.streams {
         /// <summary>
         /// Identify the URL of the stream thumbnail
         /// </summary>
-        public Uri ThumbnailURL { get; private set; }
+        public Uri? ThumbnailURL { get; private set; }
 
         /// <summary>
         /// Create new instance, overriding the loaded category with the provided value
@@ -75,10 +76,12 @@ namespace BrimeAPI.com.brimelive.api.streams {
         /// <param name="jsonData">JSON data to process</param>
         public BrimeStream(JToken jsonData) {
             string? curr = jsonData.Value<string>("_id");
-            ID = curr ?? "";
+            if (curr == null) throw new BrimeAPIMalformedResponse("Missing ID on stream details");
+            ID = curr;
 
             curr = jsonData.Value<string>("channel");
-            ChannelName = curr ?? "";
+            if (curr == null) throw new BrimeAPIMalformedResponse("Missing channel ID on stream details");
+            ChannelName = curr;
 
             JToken? category = jsonData.Value<JToken>("category");
             Category = (category == null) ? new BrimeCategory() : new BrimeCategory(category);
@@ -88,18 +91,8 @@ namespace BrimeAPI.com.brimelive.api.streams {
 
             IsLive = jsonData.Value<bool>("isLive");
 
-            DateTime? dt;
-            try {
-                dt = jsonData.Value<DateTime>("publishTime");
-            } catch (Exception) {
-                dt = DateTimeOffset.FromUnixTimeMilliseconds(jsonData.Value<Int64>("publishTime")).DateTime;
-            }
-            if (dt == null) {
-                PublishTime = DateTime.Now;
-            } else {
-                PublishTime = (DateTime)dt;
-            }
-
+            PublishTime = DateTimeOffset.FromUnixTimeMilliseconds(jsonData.Value<Int64>("publishTime")).DateTime;
+            
             JArray? streams = jsonData.Value<JArray>("streams");
             if (streams != null) {
                 Streams = new List<BrimeStreamSource>(streams.Count);
@@ -111,12 +104,14 @@ namespace BrimeAPI.com.brimelive.api.streams {
             }
 
             JToken? bUser = jsonData.Value<JToken>("broadcastingUser");
-            BroadcastingUser = (bUser != null) ? new BrimeUser(bUser) : new BrimeUser();
+            if (bUser == null) throw new BrimeAPIMalformedResponse("Missing Broadcasting user on stream details");
+            BroadcastingUser = new BrimeUser(bUser);
 
             curr = jsonData.Value<string>("streamThumbnailUrl");
-            ThumbnailURL = (curr != null) ? new Uri(curr) : new Uri("./");
+            if (curr != null) ThumbnailURL = new Uri(curr);
         }
 
+        /// <inheritdoc />
         public string toJSON() {
             StringBuilder _result = new StringBuilder();
             _result.Append("{")
@@ -127,12 +122,14 @@ namespace BrimeAPI.com.brimelive.api.streams {
                 .Append(IsLive.toJSON("isLive")).Append(", ")
                 .Append(PublishTime.Ticks.toJSON("publishTime")).Append(", ")
                 .Append(Streams.toJSON<BrimeStreamSource>("streams")).Append(", ")
-                .Append(BroadcastingUser.toJSON("broadcastingUser")).Append(", ")
-                .Append(ThumbnailURL.toJSON("streamThumbnailUrl"))
-                .Append("}");
+                .Append(BroadcastingUser.toJSON("broadcastingUser")).Append(", ");
+            if (ThumbnailURL != null)
+                _result.Append(ThumbnailURL.toJSON("streamThumbnailUrl"));
+            _result.Append("}");
             return _result.ToString();
         }
 
+        /// <inheritdoc />
         public override string ToString() {
             return toJSON();
         }

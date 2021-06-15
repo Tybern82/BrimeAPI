@@ -1,8 +1,5 @@
 ﻿#nullable enable
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using BrimeAPI.com.brimelive.api.errors;
 
 namespace BrimeAPI.com.brimelive.api.categories {
@@ -13,7 +10,7 @@ namespace BrimeAPI.com.brimelive.api.categories {
         /// <summary>
         /// [API]/v1/category/:category
         /// </summary>
-        private static readonly string GET_CATEGORY_REQUEST = "/v1/category/{0}";  // /v1/category/:category
+        private static readonly string GET_CATEGORY_REQUEST = "/category/{0}";  // /v1/category/:category
 
         /// <summary>
         /// Specify the Category to request by either Name, ID, or Slug.

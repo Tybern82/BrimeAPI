@@ -2,24 +2,56 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using BrimeAPI.com.brimelive.api.errors;
 using BrimeAPI.com.brimelive.api.users;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.realtime {
+    /// <summary>
+    /// Identify a single chat message
+    /// </summary>
     public class BrimeChatMessage {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static readonly string IMAGE_URL_FORMAT = "https://content.brimecdn.com/brime/emote/{0}/{1}";
-
+        /// <summary>
+        /// Unique identifier for this chat message
+        /// </summary>
         public string ID { get; private set; }
+
+        /// <summary>
+        /// Channel ID for the channel this message was sent to
+        /// </summary>
         public string ChannelID { get; private set; }
+
+        /// <summary>
+        /// Contents of the chat message
+        /// </summary>
         public string Message { get; private set; }
+
+        /// <summary>
+        /// Used by BrimeBot
+        /// </summary>
         public string RichContents { get; private set; }
+
+        /// <summary>
+        /// Identify the user who sent this chat message
+        /// </summary>
         public BrimeUser Sender { get; private set; }
+
+        /// <summary>
+        /// Identify the list of emotes included in this message
+        /// </summary>
         public Dictionary<string, BrimeChatEmote> Emotes { get; private set; } = new Dictionary<string, BrimeChatEmote>();
+
+        /// <summary>
+        /// Identify the timestamp for when this message was sent
+        /// </summary>
         public DateTime Timestamp { get; private set; }
 
+        /// <summary>
+        /// Create a new instance from the given JSON data
+        /// </summary>
+        /// <param name="message">JSON data to process</param>
         public BrimeChatMessage(JToken message) {
             // Logger.Trace("Loading Chat Message: " + message);
             string? __notice = message.Value<string>("__notice");
@@ -39,7 +71,9 @@ namespace BrimeAPI.com.brimelive.api.realtime {
             RichContents = curr ?? "";
 
             JToken? sender = message["sender"];
-            Sender = (sender == null) ? new BrimeUser() : new BrimeUser(sender);
+            if (sender == null) throw new BrimeAPIMalformedResponse("Missing sender details on chat message");
+            Sender = new BrimeUser(sender);
+            // Sender = (sender == null) ? new BrimeUser() : new BrimeUser(sender);
 
             JToken? emotes = message["emotes"];
             if (emotes != null) {
@@ -57,12 +91,13 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                 }
             }
             try {
-                Timestamp = message.Value<DateTime>("timestamp");
-            } catch (Exception) {
                 Timestamp = DateTimeOffset.FromUnixTimeSeconds(message.Value<long>("timestamp")).DateTime;
+            } catch (Exception) {
+                Timestamp = message.Value<DateTime>("timestamp");
             }
         }
 
+        /// <inheritdoc />
         public override string ToString() {
             string _result = "ChannelID: " + ChannelID + "\n";
             _result += "Message: " + Message + "\n";
@@ -76,23 +111,22 @@ namespace BrimeAPI.com.brimelive.api.realtime {
         }
     }
 
+    /// <summary>
+    /// Identify an emote used in a particular message. 
+    /// </summary>
     public class BrimeChatEmote {
+
+        /// <summary>
+        /// ID for the emote
+        /// </summary>
         public string EmoteID { get; private set; }
 
+        /// <summary>
+        /// Create a new instance for the given emote ID
+        /// </summary>
+        /// <param name="id">ID for the emote</param>
         public BrimeChatEmote(string id) {
             this.EmoteID = id;
-        }
-
-        public string get1xImageUrl() {
-            return string.Format(BrimeChatMessage.IMAGE_URL_FORMAT, EmoteID, "1x");
-        }
-
-        public string get2xImageUrl() {
-            return string.Format(BrimeChatMessage.IMAGE_URL_FORMAT, EmoteID, "2x");
-        }
-
-        public string get3xImageUrl() {
-            return string.Format(BrimeChatMessage.IMAGE_URL_FORMAT, EmoteID, "3x");
         }
     }
 } 

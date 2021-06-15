@@ -1,42 +1,34 @@
 ﻿#nullable enable
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using BrimeAPI.com.brimelive.api.errors;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.emotes {
-    public class GlobalEmotesRequest : BrimeAPIRequest<GlobalEmotesResponse> {
+    /// <summary>
+    /// Query for global emote sets
+    /// </summary>
+    public class GlobalEmotesRequest : BrimeAPIRequest<List<BrimeEmoteSet>> {
 
-        private static string GLOBAL_EMOTES_REQUEST = "/emotesets";
+        private static readonly string GLOBAL_EMOTES_REQUEST = "/emotesets";
 
-        // No Parameters
-
+        /// <summary>
+        /// Create a new request - no parameters as this retrieves all global emote sets
+        /// </summary>
         public GlobalEmotesRequest() : base(GLOBAL_EMOTES_REQUEST) {
             // No parameters on GlobalEmotes request
         }
 
-        public override GlobalEmotesResponse getResponse() {
-            return new GlobalEmotesResponse(doRequest());
-        }
-    }
-
-    public class GlobalEmotesResponse {
-
-        public List<BrimeEmoteSet> GlobalEmoteSets { get; private set; }
-
-        public GlobalEmotesResponse(BrimeAPIResponse apiResponse) {
-            BrimeAPIError.ThrowException(apiResponse);
-            try {
-                JArray? emoteSets = apiResponse.Data.Value<JArray>("emoteSets");
-                GlobalEmoteSets = new List<BrimeEmoteSet>((emoteSets == null) ? 0 : emoteSets.Count);
-                if (emoteSets != null) {
-                    foreach (JToken set in emoteSets) GlobalEmoteSets.Add(new BrimeEmoteSet(set));
-                }
-            } catch (Exception e) {
-                throw new BrimeAPIMalformedResponse(e.ToString());
+        /// <inheritdoc /> 
+        public override List<BrimeEmoteSet> getResponse() {
+            BrimeAPIResponse response = doRequest();
+            BrimeAPIError.ThrowException(response);
+            JArray? emoteSets = response.Data.Value<JArray>("emoteSets");
+            List<BrimeEmoteSet> _result = new List<BrimeEmoteSet>((emoteSets == null) ? 0 : emoteSets.Count);
+            if (emoteSets != null) {
+                foreach (JToken set in emoteSets) _result.Add(new BrimeEmoteSet(set));
             }
+            return _result;
         }
     }
 } 

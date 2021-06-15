@@ -7,8 +7,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api {
-
+    /// <summary>
+    /// Used to identify classes which have implemented the toJSON method which should be used
+    /// in place of the default <c>JsonConvert.ToString(object)</c> method.
+    /// </summary>
     public interface JSONConvertable {
+        /// <summary>
+        /// Convert this object into a JSON representation. If object takes a JToken parameter to a constructor, 
+        /// the return from this method should be able to be loaded using this constructor to produce an 
+        /// equivalent object.
+        /// </summary>
+        /// <returns>JSON equivalent to this object</returns>
         public string toJSON();
     }
 

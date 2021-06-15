@@ -74,6 +74,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="com\brimelive\api\BrimeAPI.cs" />
+    <Compile Include="com\brimelive\api\categories\CategoryStreams.cs" />
+    <Compile Include="com\brimelive\api\streams\StreamDetails.cs" />
     <Compile Include="com\brimelive\api\errors\BrimeAPIError.cs" />
     <Compile Include="com\brimelive\api\BrimeAPIRequest.cs" />
     <Compile Include="com\brimelive\api\BrimeAPIResponse.cs" />

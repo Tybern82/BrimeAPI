@@ -3,7 +3,9 @@
 using System;
 using System.Text;
 using BrimeAPI.com.brimelive.api.categories;
+using BrimeAPI.com.brimelive.api.channels;
 using BrimeAPI.com.brimelive.api.errors;
+using BrimeAPI.com.brimelive.api.streams;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.vods {
@@ -16,7 +18,32 @@ namespace BrimeAPI.com.brimelive.api.vods {
         /// <summary>
         /// VOD has completed broadcasting
         /// </summary>
-        FINISHED
+        FINISHED,
+        /// <summary>
+        /// VOD is currently broadcasting
+        /// </summary>
+        IN_PROGRESS,
+        /// <summary>
+        /// Unknown / unrecognized state
+        /// </summary>
+        UNKNOWN
+    }
+
+    /// <summary>
+    /// Helper class for extension methods for VODState
+    /// </summary>
+    public static class VODStateUtil {
+
+        /// <summary>
+        /// Convert given state into valid JSON string output
+        /// </summary>
+        /// <param name="state">state to convert</param>
+        /// <returns>string suitable for inclusion in JSON</returns>
+        public static string GetStateString(this VODState state) => state switch {
+            VODState.FINISHED => "FINISHED",
+            VODState.IN_PROGRESS => "IN_PROGRESS",
+            _ => ""
+        };
     }
 
 
@@ -50,7 +77,7 @@ namespace BrimeAPI.com.brimelive.api.vods {
      * }
      * </code></example>
      */
-    public class BrimeVOD {
+    public class BrimeVOD : JSONConvertable {
 
         /// <summary>
         /// Local NLog logging class.
@@ -68,6 +95,21 @@ namespace BrimeAPI.com.brimelive.api.vods {
         public string ChannelID { get; private set; }
 
         /// <summary>
+        /// Retrieve the Channel Information
+        /// </summary>
+        public BrimeChannel Channel { 
+            get {
+                if (_Channel == null) {
+                    // TODO: Update to call through BrimeAPI to allow caching of requests.
+                    ChannelRequest req = new ChannelRequest(ChannelID);
+                    _Channel = req.getResponse();
+                }
+                return _Channel;
+            }
+        }
+        private BrimeChannel? _Channel;
+
+        /// <summary>
         /// URL for the VOD video data
         /// </summary>
         public Uri VODVideoURL { get; private set; }
@@ -80,12 +122,12 @@ namespace BrimeAPI.com.brimelive.api.vods {
         /// <summary>
         /// Information about the original broadcast stream
         /// </summary>
-        public BrimeVODStreamInfo Stream { get; private set; }
+        public StreamDetails Stream { get; private set; }
 
         /// <summary>
         /// Current state of the VOD (used to identify whether VOD is still currently broadcasting)
         /// </summary>
-        public string State { get; private set; }   // TODO: Update to enum once full set of states available
+        public VODState State { get; private set; }   
 
         /// <summary>
         /// Identifies when this VOD started broadcasting
@@ -140,119 +182,43 @@ namespace BrimeAPI.com.brimelive.api.vods {
                 Logger.Error("Missing stream information in VOD Response");
                 throw new BrimeAPIMalformedResponse("Missing stream information in VOD Response");
             }
-            Stream = new BrimeVODStreamInfo(streamInfo);
+            Stream = new StreamDetails(streamInfo);
 
             curr = jsonData.Value<string>("state");
             if (curr == null) {
                 Logger.Error("Missing state in VOD Response");
                 throw new BrimeAPIMalformedResponse("Missing state in VOD Response");
             }
-            State = curr;
+            State = curr switch {
+                "FINISHED" => VODState.FINISHED,
+                "IN_PROGRESS" => VODState.IN_PROGRESS,
+                _ => VODState.UNKNOWN
+            };
 
-            StartDate = jsonData.Value<DateTime>("startDate");
-            EndDate = jsonData.Value<DateTime>("endDate");
-            ExpiresAt = jsonData.Value<DateTime>("expiresAt");
-        }
-    }
-
-    /**
-     * <summary>
-     * <para>Class <c>BrimeVODStreamInfo</c> is used to record the stream information assocated with a VOD record. This item
-     * records the Stream Title and Stream Category used when the original stream was broadcast.</para>
-     * <example>Example: <code>
-     * "stream": {
-     *     "title": "Brime Api Example",
-     *     "category": {
-     *         "_id": "606e93525fa50e5780970135",
-     *         "genres": [],
-     *         "name": "Uncategorized",
-     *         "slug": "uncategorized",
-     *         "summary": "",
-     *         "cover": "https://content.brimecdn.com/brime/category_images/uncategorized.png",
-     *         "type": "entertainment"
-     *     }
-     * }
-     * </code></example>
-     * </summary>
-     */
-    public class BrimeVODStreamInfo : JSONConvertable {
-
-        /// <summary>
-        /// Error message when missing Title element in JSON data.
-        /// </summary>
-        private const string ERR_MissingTitle = "Missing Title in VOD Stream Info";
-        
-        /// <summary>
-        /// Error message when missing Category element in JSON data.
-        /// </summary>
-        private const string ERR_MisingCategory = "Missing Category in VOD Stream Info";
-        
-        /// <summary>
-        /// ID for Title element when loading/storing to JSON.
-        /// </summary>
-        private const string ID_Title = "title";
-        
-        /// <summary>
-        /// ID for Category element when loading/storing to JSON.
-        /// </summary>
-        private const string ID_Category = "category";
-
-        /// <summary>
-        /// Local NLog logging class.
-        /// </summary>
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        /// <summary>
-        /// Property <c>Title</c> specifies the Stream Title of the original broadcast.
-        /// </summary>
-        public string Title { get; private set; }
-
-        /// <summary>
-        /// Property <c>Category</c> specifies the Stream Category of the original broadcast.
-        /// </summary>
-        public BrimeCategory Category { get; private set; }
-
-
-        ///
-        /// <summary>Construct a new <c>BrimeVODStreamInfo</c> record based on the given JSON response data.</summary>
-        /// <param name="jsonData"><c>JToken</c> containing the JSON formatted record from API response.</param>
-        /// <exception cref="BrimeAPIMalformedResponse">Thrown if provided JSON data is missing either <c>title</c> or <c>category</c> elements.</exception>
-        ///
-        public BrimeVODStreamInfo(JToken jsonData) {
-            string? curr = jsonData.Value<string>(ID_Title);
-            if (curr == null) {
-                Logger.Error(ERR_MissingTitle);
-                throw new BrimeAPIMalformedResponse(ERR_MissingTitle);
-            }
-            Title = curr;
-
-            JToken? category = jsonData.Value<JToken>(ID_Category);
-            if (category == null) {
-                Logger.Error(ERR_MisingCategory);
-                throw new BrimeAPIMalformedResponse(ERR_MisingCategory);
-            }
-            Category = new BrimeCategory(category);
+            StartDate = DateTimeOffset.FromUnixTimeMilliseconds(jsonData.Value<long>("startDate")).DateTime;
+            EndDate = DateTimeOffset.FromUnixTimeMilliseconds(jsonData.Value<long>("endDate")).DateTime;
+            ExpiresAt = DateTimeOffset.FromUnixTimeMilliseconds(jsonData.Value<long>("expiresAt")).DateTime;
         }
 
-        /// <summary>
-        /// Convert this record to its equivalent JSON formatted text.
-        /// </summary>
-        /// <returns><c>String</c> containing JSON formatted data for this record</returns>
+        /// <inheritdoc />
         public string toJSON() {
             StringBuilder _result = new StringBuilder();
             _result.Append("{")
-                .Append(Title.toJSON(ID_Title)).Append(", ")
-                .Append(Category.toJSON(ID_Category))
+                .Append(ID.toJSON("_id")).Append(", ")
+                .Append(ChannelID.toJSON("channelID")).Append(", ")
+                .Append(VODVideoURL.toJSON("vodVideoUrl")).Append(", ")
+                .Append(VODThumbnailURL.toJSON("vodThumbnailUrl")).Append(", ")
+                .Append(State.GetStateString().toJSON("state")).Append(", ")
+                .Append(new DateTimeOffset(StartDate).ToUnixTimeMilliseconds().toJSON("startDate")).Append(", ")
+                .Append(new DateTimeOffset(EndDate).ToUnixTimeMilliseconds().toJSON("endDate")).Append(", ")
+                .Append(new DateTimeOffset(ExpiresAt).ToUnixTimeMilliseconds().toJSON("expiresAt")).Append(", ")
                 .Append("}");
             return _result.ToString();
         }
 
-        /// <summary>
-        /// Convert this record to a <c>string</c> value suitable for display/logging.
-        /// </summary>
-        /// <returns>"BrimeVODStreamInfo: {JSON object}"</returns>
+        /// <inheritdoc />
         public override string ToString() {
-            return "BrimeVODStreamInfo: " + toJSON();
+            return toJSON();
         }
     }
 }

@@ -21,6 +21,359 @@
             Client-ID assigned. This field is static so will only need to be specified once.
             </summary>
         </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPI.EmoteSets">
+            <summary>
+            Used to retrieve previously requested EmoteSets
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.BrimeAPI.GlobalEmotes">
+            <summary>
+            Used to retrieve the list of global emote sets
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.BrimeAPI.lookupEmoteSet(System.String)">
+            <summary>
+            Retrieve the given set of emotes
+            </summary>
+            <param name="setID">ID for emote set to retrieve</param>
+            <returns>the requested emote set (or null, if no set previously requested)</returns>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.categories.CategoryStreams">
+            <summary>
+            Response data for category requests (used by both request for all live categorys, and when
+            requesting a specific category).
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.CategoryStreams.Category">
+            <summary>
+            Identify the category for the provided streams
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.CategoryStreams.Streams">
+            <summary>
+            List of streams currently live in this category
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryStreams.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Process given response to request
+            </summary>
+            <param name="jsonData">JSON data to process</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.categories.BrimeCategory">
+            <summary>
+            Identify the category for the stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.ID">
+            <summary>
+            Category Identifier
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.IGDB">
+            <summary>
+            IGDB number
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Genres">
+            <summary>
+            List of genres associated with this category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Name">
+            <summary>
+            Display name for this category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Slug">
+            <summary>
+            Identifying slug for this category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Summary">
+            <summary>
+            Provides a short description of this category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.CoverURL">
+            <summary>
+            Identify cover-art for this category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Type">
+            <summary>
+            Identify the type of Category
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Construct a new instance, using the provided JSON data
+            </summary>
+            <param name="jsonData">JSON to load category from</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.#ctor">
+            <summary>
+            Create a new instance, providing empty/default parameters
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.toJSON">
+            <summary>
+            Convert this object to JSON data
+            </summary>
+            <returns>JSON encoding of this object</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.categories.CategoryRequest">
+            <summary>
+            Gets information for a specific category.
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.categories.CategoryRequest.GET_CATEGORY_REQUEST">
+            <summary>
+            [API]/v1/category/:category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.CategoryRequest.Category">
+            <summary>
+            Specify the Category to request by either Name, ID, or Slug.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryRequest.#ctor(System.String)">
+            <summary>
+            <c>CategoryRequest</c> constructor. Requires parameter specifying the category to get information from.
+            </summary>
+            <param name="category">The category name, id, or slug.</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryRequest.getResponse">
+            <summary>
+            Generate BrimeCategory from API response.
+            </summary>
+            <returns><c>BrimeCategory</c> for the requested category name/id/slug.</returns>
+            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">If there is an error in the returned Category.</exception>
+            <seealso cref="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.getResponse"/>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.categories.LiveCategoriesRequest">
+            <summary>
+            Queries for all currently live categories (ie where there is a current stream broadcasting in this category)
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.LiveCategoriesRequest.#ctor">
+            <summary>
+            Create a new instance - no parameters as this queries for all currently live categories
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.LiveCategoriesRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.categories.LivestreamsByCategoryRequest">
+            <summary>
+            Query for streams currently live in a specific category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.categories.LivestreamsByCategoryRequest.Category">
+            <summary>
+            Category to request live streams from (can be specified by Name, ID or Slug)
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.LivestreamsByCategoryRequest.#ctor(System.String)">
+            <summary>
+            Create a new request for the given category
+            </summary>
+            <param name="category">name, ID or slug of category to request</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.categories.LivestreamsByCategoryRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.streams.StreamDetails">
+            <summary>
+            Contains the stream information for the stream where the clip was taken
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.StreamDetails.Category">
+            <summary>
+            Category the original stream was broadcast under
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.StreamDetails.Title">
+            <summary>
+            Original title of the stream
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamDetails.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance based on the given JSON data
+            </summary>
+            <param name="jsonData">JSON data to process</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamDetails.toJSON">
+            <inheritdoc />
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamDetails.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.streams.BrimeStream">
+            <summary>
+            Identifies details about a stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.ID">
+            <summary>
+            Stream ID
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.ChannelName">
+            <summary>
+            Name of channel streaming
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.Category">
+            <summary>
+            Identifies the current streaming category
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.Title">
+            <summary>
+            Identifies the current title of the stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.IsLive">
+            <summary>
+            Identify whether this stream is currently live
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.PublishTime">
+            <summary>
+            Identify the time this stream started
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.Streams">
+            <summary>
+            Identify the available streaming sources
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.BroadcastingUser">
+            <summary>
+            Identify the user currently broadcasting this stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.ThumbnailURL">
+            <summary>
+            Identify the URL of the stream thumbnail
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStream.#ctor(Newtonsoft.Json.Linq.JToken,BrimeAPI.com.brimelive.api.categories.BrimeCategory)">
+            <summary>
+            Create new instance, overriding the loaded category with the provided value
+            </summary>
+            <param name="jsonData">JSON data to process</param>
+            <param name="category">Category to set</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStream.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create new instance, loading data from the given JSON data
+            </summary>
+            <param name="jsonData">JSON data to process</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStream.toJSON">
+            <inheritdoc />
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStream.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource">
+            <summary>
+            Defines the stream details for an individual broadcast resolution
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.Bandwidth">
+            <summary>
+            Identify the bandwidth of this stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.Resolution">
+            <summary>
+            Identify the resolution for the stream
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ResolutionX">
+            <summary>
+            Utility method to get X-Resolution
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ResolutionY">
+            <summary>
+            Utility method to get Y-Resolution
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.VCodec">
+            <summary>
+            Identify the video codec
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ACodec">
+            <summary>
+            Identify the audio codec
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.Protocol">
+            <summary>
+            Identify the broadcast protocol
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.IsSource">
+            <summary>
+            Identify whether this is the original source resolution
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance based on the given JSON data
+            </summary>
+            <param name="jsonData">JSON data to process</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.toJSON">
+            <summary>
+            Convert this object to JSON data
+            </summary>
+            <returns>JSON encoding of this object</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.streams.LiveStreamsRequest">
+            <summary>
+            Load details of currently live streams
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.LiveStreamsRequest.#ctor">
+            <summary>
+            Create a new instance to request live streams
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.LiveStreamsRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.streams.StreamRequest">
+            <summary>
+            Queries for a stream by the given channel and returns the data for that stream.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.streams.StreamRequest.ChannelName">
+            <summary>
+            Name of the channel to request current live stream information from
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamRequest.#ctor(System.String)">
+            <summary>
+            Create a new instance, requesting stream information for given channel
+            </summary>
+            <param name="channelName">name of the channel to request live stream information</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamRequest.getResponse">
+            <inheritdoc />
+        </member>
         <member name="T:BrimeAPI.com.brimelive.api.errors.ErrorCheckResult">
             <summary>
             Defines the states possible when checking for errors in API response. Can be either a VALID response, a response containing
@@ -442,99 +795,67 @@
             <param name="json">JSON data returned by the API request.</param>
             <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">Thrown only if there is an issue processing the API Error response.</exception>
         </member>
-        <member name="T:BrimeAPI.com.brimelive.api.categories.BrimeCategory">
+        <member name="T:BrimeAPI.com.brimelive.api.channels.BrimeChannel">
             <summary>
-            Identify the category for the stream
+            Identifies a channel on Brime
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.ID">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.ID">
             <summary>
-            Category Identifier
+            Unique ID for this channel
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.IGDB">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.ChannelName">
             <summary>
-            IGDB number
+            Name of the channel
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Genres">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.Category">
             <summary>
-            List of genres associated with this category
+            Currently assigned category for this channel
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Name">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.Title">
             <summary>
-            Display name for this category
+            Currently assigned title for this channel
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Slug">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.IsLive">
             <summary>
-            Identifying slug for this category
+            Identify whether this channel is currently live
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Summary">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.FollowerCount">
             <summary>
-            Provides a short description of this category
+            Identify current follower count for this channel
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.CoverURL">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.SubscriberCount">
             <summary>
-            Identify cover-art for this category
+            Identify the current subscriber count for this channel
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.BrimeCategory.Type">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.Description">
             <summary>
-            Identify the type of Category
+            Identify the currently set description for this channel
             </summary>
         </member>
-        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.#ctor(Newtonsoft.Json.Linq.JToken)">
+        <member name="P:BrimeAPI.com.brimelive.api.channels.BrimeChannel.Owners">
             <summary>
-            Construct a new instance, using the provided JSON data
-            </summary>
-            <param name="jsonData">JSON to load category from</param>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.#ctor">
-            <summary>
-            Create a new instance, providing empty/default parameters
+            Identify the user(s) who own this channel
             </summary>
         </member>
-        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.toJSON">
+        <member name="M:BrimeAPI.com.brimelive.api.channels.BrimeChannel.#ctor(Newtonsoft.Json.Linq.JToken)">
             <summary>
-            Convert this object to JSON data
+            Create a new instance using the given JSON data
             </summary>
-            <returns>JSON encoding of this object</returns>
+            <param name="jsonData">JSON data to process</param>
         </member>
-        <member name="M:BrimeAPI.com.brimelive.api.categories.BrimeCategory.ToString">
+        <member name="M:BrimeAPI.com.brimelive.api.channels.BrimeChannel.toJSON">
             <inheritdoc />
         </member>
-        <member name="T:BrimeAPI.com.brimelive.api.categories.CategoryRequest">
-            <summary>
-            Gets information for a specific category.
-            </summary>
-        </member>
-        <member name="F:BrimeAPI.com.brimelive.api.categories.CategoryRequest.GET_CATEGORY_REQUEST">
-            <summary>
-            [API]/v1/category/:category
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.categories.CategoryRequest.Category">
-            <summary>
-            Specify the Category to request by either Name, ID, or Slug.
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryRequest.#ctor(System.String)">
-            <summary>
-            <c>CategoryRequest</c> constructor. Requires parameter specifying the category to get information from.
-            </summary>
-            <param name="category">The category name, id, or slug.</param>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.categories.CategoryRequest.getResponse">
-            <summary>
-            Generate BrimeCategory from API response.
-            </summary>
-            <returns><c>BrimeCategory</c> for the requested category name/id/slug.</returns>
-            <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">If there is an error in the returned Category.</exception>
-            <seealso cref="M:BrimeAPI.com.brimelive.api.BrimeAPIRequest`1.getResponse"/>
+        <member name="M:BrimeAPI.com.brimelive.api.channels.BrimeChannel.ToString">
+            <inheritdoc />
         </member>
         <member name="T:BrimeAPI.com.brimelive.api.channels.BrimeSubscription">
             <summary>
@@ -615,7 +936,7 @@
         </member>
         <member name="P:BrimeAPI.com.brimelive.api.channels.ChannelRequest.ChannelName">
             <summary>
-            Identifies the name of the channel to request information on.
+            Identifies the name of the channel to request information on. Will accept both Channel Name and Channel ID.
             </summary>
         </member>
         <member name="M:BrimeAPI.com.brimelive.api.channels.ChannelRequest.#ctor(System.String)">
@@ -726,33 +1047,6 @@
         <member name="M:BrimeAPI.com.brimelive.api.clips.BrimeClip.ToString">
             <inheritdoc />
         </member>
-        <member name="T:BrimeAPI.com.brimelive.api.clips.StreamDetails">
-            <summary>
-            Contains the stream information for the stream where the clip was taken
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.clips.StreamDetails.Category">
-            <summary>
-            Category the original stream was broadcast under
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.clips.StreamDetails.Title">
-            <summary>
-            Original title of the stream
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.clips.StreamDetails.#ctor(Newtonsoft.Json.Linq.JToken)">
-            <summary>
-            Create a new instance based on the given JSON data
-            </summary>
-            <param name="jsonData">JSON data to process</param>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.clips.StreamDetails.toJSON">
-            <inheritdoc />
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.clips.StreamDetails.ToString">
-            <inheritdoc />
-        </member>
         <member name="T:BrimeAPI.com.brimelive.api.clips.ChannelClipsRequest">
             <summary>
             Query for the clips associated with a given channel. Can be paged
@@ -811,6 +1105,183 @@
         </member>
         <member name="M:BrimeAPI.com.brimelive.api.clips.ClipInfoRequest.getResponse">
             <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.clips.CreateClipRequest">
+            <summary>
+            Trigger creation of a new clip
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.clips.CreateClipRequest.ChannelName">
+            <summary>
+            Identify the channel to make clip against
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.clips.CreateClipRequest.#ctor(System.String)">
+            <summary>
+            Creates a new clip on the given channel
+            </summary>
+            <param name="channelName"></param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.clips.CreateClipRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSize">
+            <summary>
+            Specify the sizing options for Brime Emotes
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSize.X1">
+            <summary>
+            Smallest size (x1)
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSize.X2">
+            <summary>
+            Intermediate size (x2)
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSize.X3">
+            <summary>
+            Largest size (x3)
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.emotes.BrimeEmote">
+            <summary>
+            Identify an emote in the Brime system
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.ID">
+            <summary>
+            Identifier for this emote
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.Name">
+            <summary>
+            Name for this emote
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.EmoteSet">
+            <summary>
+            Used to retrieve the EmoteSet this emote is a part of
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance from the given JSON data
+            </summary>
+            <param name="emote">JSON data to process</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.getImageURL(BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSize)">
+            <summary>
+            Retrieve the URL for this emote with the given size
+            </summary>
+            <param name="sz">size of the emote to retrieve</param>
+            <returns>URL for emote at this size</returns>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmote.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet">
+            <summary>
+            Specify a collection of emotes 
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.ID">
+            <summary>
+            Unique ID for this emote set
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.Name">
+            <summary>
+            Name for this emote set
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.ChannelID">
+            <summary>
+            Associated channel for this emote set
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.Emotes">
+            <summary>
+            List of the emotes included in this set
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance from the given JSON data
+            </summary>
+            <param name="emoteSet">JSON data to process</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.BrimeEmoteSet.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.emotes.ChannelEmotesRequest">
+            <summary>
+            Query for list of emotes associated with the given channel
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.ChannelEmotesRequest.ChannelID">
+            <summary>
+            Channel to request (appears to support both name and ID)
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.ChannelEmotesRequest.#ctor(System.String)">
+            <summary>
+            Create a new request for the given channel (appears to support both ID and name)
+            </summary>
+            <param name="ID">ID / Name of channel to request</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.ChannelEmotesRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.emotes.EmoteSetRequest">
+            <summary>
+            Query for a list of emotes in a particular set
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.emotes.EmoteSetRequest.EmoteSetID">
+            <summary>
+            ID for the emote set to retrieve
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.EmoteSetRequest.#ctor(System.String)">
+            <summary>
+            Create a new request for the given emote set
+            </summary>
+            <param name="ID">ID for the set to retrieve</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.EmoteSetRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.emotes.GlobalEmotesRequest">
+            <summary>
+            Query for global emote sets
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.GlobalEmotesRequest.#ctor">
+            <summary>
+            Create a new request - no parameters as this retrieves all global emote sets
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.emotes.GlobalEmotesRequest.getResponse">
+            <inheritdoc /> 
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.JSONConvertable">
+            <summary>
+            Used to identify classes which have implemented the toJSON method which should be used
+            in place of the default <c>JsonConvert.ToString(object)</c> method.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.JSONConvertable.toJSON">
+            <summary>
+            Convert this object into a JSON representation. If object takes a JToken parameter to a constructor, 
+            the return from this method should be able to be loaded using this constructor to produce an 
+            equivalent object.
+            </summary>
+            <returns>JSON equivalent to this object</returns>
         </member>
         <member name="T:BrimeAPI.com.brimelive.api.JSONUtil">
             <summary>
@@ -984,6 +1455,118 @@
             <param name="level">Ably Logging Level, used to select the appropriate NLog level</param>
             <param name="message">message to log</param>
         </member>
+        <member name="T:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage">
+            <summary>
+            Identify a single chat message
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.ID">
+            <summary>
+            Unique identifier for this chat message
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.ChannelID">
+            <summary>
+            Channel ID for the channel this message was sent to
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.Message">
+            <summary>
+            Contents of the chat message
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.RichContents">
+            <summary>
+            Used by BrimeBot
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.Sender">
+            <summary>
+            Identify the user who sent this chat message
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.Emotes">
+            <summary>
+            Identify the list of emotes included in this message
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.Timestamp">
+            <summary>
+            Identify the timestamp for when this message was sent
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance from the given JSON data
+            </summary>
+            <param name="message">JSON data to process</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeChatMessage.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.realtime.BrimeChatEmote">
+            <summary>
+            Identify an emote used in a particular message. 
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeChatEmote.EmoteID">
+            <summary>
+            ID for the emote
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeChatEmote.#ctor(System.String)">
+            <summary>
+            Create a new instance for the given emote ID
+            </summary>
+            <param name="id">ID for the emote</param>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI">
+            <summary>
+            Used to access realtime streaming information (ie Chat messages, new follower/subscribers, etc)
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.VIEW_UPDATE">
+            <summary>
+            Identify how often to sync the viewer count. Count is updated in realtime using ENTER/LEAVE messages.
+            When this timer expires, API will try to retrieve current count directly to ensure no message has been 
+            missed leading to an incorrect count. 
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.ViewCountTracker">
+            <summary>
+            Retrieve the Viewer counter tracker (implemented as a listener for ENTER/LEAVE messages)
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.#ctor(System.String)">
+            <summary>
+            Create a new instance for the given channel ID / name. Will assume parameter is ID if 
+            there is a Client-ID set, or will assume a channel Name if no ID present.
+            </summary>
+            <param name="channelID">ID (or name) of channel to connect to</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.registerListener(BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeListener)">
+            <summary>
+            Used to register a new listener instance with this connection.
+            </summary>
+            <param name="realtimeListener">listener to attach</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.removeListener(BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeListener)">
+            <summary>
+            Used to remove an existing listener so it will stop receiving events from this
+            connection.
+            </summary>
+            <param name="realtimeListener">listener to remove</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.connect">
+            <summary>
+            Used to activate connection.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeAPI.close">
+            <summary>
+            Used to close this connection
+            </summary>
+        </member>
         <member name="T:BrimeAPI.com.brimelive.api.realtime.BrimeRealtimeListener">
             <summary>
             Interface for BrimeAPI Realtime callbacks
@@ -1134,6 +1717,16 @@
             Defines a sorting order when making requests which may retrieve a subset of all available items
             </summary>
         </member>
+        <member name="F:BrimeAPI.com.brimelive.api.SortOrder.ASC">
+            <summary>
+            Sort responses from oldest to newest
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.SortOrder.DESC">
+            <summary>
+            SOrt responses from newest to oldest
+            </summary>
+        </member>
         <member name="T:BrimeAPI.com.brimelive.api.SortOrderUtil">
             <summary>
             Helper methods for working with SortOrder enum.
@@ -1146,159 +1739,67 @@
             <param name="order">SortOrder to process</param>
             <returns>"asc" for SortOrder.ASC, otherwise "desc"</returns>
         </member>
-        <member name="T:BrimeAPI.com.brimelive.api.streams.BrimeStream">
+        <member name="T:BrimeAPI.com.brimelive.api.users.BrimeUser">
             <summary>
-            Identifies details about a stream
+            Identifies a Brime User. Note that most requests which retrieve User details require Special Access
+            on the client-ID.
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.ID">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.UserID">
             <summary>
-            Stream ID
+            Unique identifier for this user
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.ChannelName">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.Username">
             <summary>
-            Name of channel streaming
+            Identify the username of this user
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.Category">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.DisplayName">
             <summary>
-            Identifies the current streaming category
+            Identify how this username should be displayed 
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.Title">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.Avatar">
             <summary>
-            Identifies the current title of the stream
+            Link to user's avatar image
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.IsLive">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.Color">
             <summary>
-            Identify whether this stream is currently live
+            Identify the color this username should display as in chat
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.PublishTime">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.Roles">
             <summary>
-            Identify the time this stream started
+            Identify roles associated with this user
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.Streams">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.Badges">
             <summary>
-            Identify the available streaming sources
+            Identify badges associated with this user
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.BroadcastingUser">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.isBrimePro">
             <summary>
-            Identify the user currently broadcasting this stream
+            Identify whether this user has subscribed to BrimePro
             </summary>
         </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStream.ThumbnailURL">
+        <member name="P:BrimeAPI.com.brimelive.api.users.BrimeUser.extendedVODsEnabled">
             <summary>
-            Identify the URL of the stream thumbnail
+            Identify whether this user has enabled extended VOD storage (requires BrimePro subscription)
             </summary>
         </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStream.#ctor(Newtonsoft.Json.Linq.JToken,BrimeAPI.com.brimelive.api.categories.BrimeCategory)">
-            <summary>
-            Create new instance, overriding the loaded category with the provided value
-            </summary>
-            <param name="jsonData">JSON data to process</param>
-            <param name="category">Category to set</param>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStream.#ctor(Newtonsoft.Json.Linq.JToken)">
-            <summary>
-            Create new instance, loading data from the given JSON data
-            </summary>
-            <param name="jsonData">JSON data to process</param>
-        </member>
-        <member name="T:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource">
-            <summary>
-            Defines the stream details for an individual broadcast resolution
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.Bandwidth">
-            <summary>
-            Identify the bandwidth of this stream
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.Resolution">
-            <summary>
-            Identify the resolution for the stream
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ResolutionX">
-            <summary>
-            Utility method to get X-Resolution
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ResolutionY">
-            <summary>
-            Utility method to get Y-Resolution
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.VCodec">
-            <summary>
-            Identify the video codec
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ACodec">
-            <summary>
-            Identify the audio codec
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.Protocol">
-            <summary>
-            Identify the broadcast protocol
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.IsSource">
-            <summary>
-            Identify whether this is the original source resolution
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.#ctor(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BrimeAPI.com.brimelive.api.users.BrimeUser.#ctor(Newtonsoft.Json.Linq.JToken)">
             <summary>
             Create a new instance based on the given JSON data
             </summary>
             <param name="jsonData">JSON data to process</param>
         </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.toJSON">
-            <summary>
-            Convert this object to JSON data
-            </summary>
-            <returns>JSON encoding of this object</returns>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.BrimeStreamSource.ToString">
+        <member name="M:BrimeAPI.com.brimelive.api.users.BrimeUser.ToString">
             <inheritdoc />
         </member>
-        <member name="T:BrimeAPI.com.brimelive.api.streams.LiveStreamsRequest">
-            <summary>
-            Load details of currently live streams
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.LiveStreamsRequest.#ctor">
-            <summary>
-            Create a new instance to request live streams
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.LiveStreamsRequest.getResponse">
-            <inheritdoc />
-        </member>
-        <member name="T:BrimeAPI.com.brimelive.api.streams.StreamRequest">
-            <summary>
-            Queries for a stream by the given channel and returns the data for that stream.
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.streams.StreamRequest.ChannelName">
-            <summary>
-            Name of the channel to request current live stream information from
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamRequest.#ctor(System.String)">
-            <summary>
-            Create a new instance, requesting stream information for given channel
-            </summary>
-            <param name="channelName">name of the channel to request live stream information</param>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.streams.StreamRequest.getResponse">
+        <member name="M:BrimeAPI.com.brimelive.api.users.BrimeUser.toJSON">
             <inheritdoc />
         </member>
         <member name="T:BrimeAPI.com.brimelive.api.users.TotalUsersRequest">
@@ -1315,6 +1816,36 @@
         </member>
         <member name="M:BrimeAPI.com.brimelive.api.users.TotalUsersRequest.getResponse">
             <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.users.UserClipsRequest">
+            <summary>
+            Query for clips associated with a given user.
+            </summary>
+        </member>
+        <member name="P:BrimeAPI.com.brimelive.api.users.UserClipsRequest.UserName">
+            <summary>
+            Name of user to retrieve clips from
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.users.UserClipsRequest.#ctor(System.String)">
+            <summary>
+            Create a new request for the given user
+            </summary>
+            <param name="userName">name of user to retrieve clips from</param>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.users.UserClipsRequest.getResponse">
+            <inheritdoc />
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.users.UserClipsResponse">
+            <summary>
+            Placeholder class for response from user clip request.
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.users.UserClipsResponse.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Create a new instance using the given JSON data
+            </summary>
+            <param name="jsonData">JSON data to process</param>
         </member>
         <member name="T:BrimeAPI.com.brimelive.api.users.UserFollowingRequest">
             <summary>
@@ -1383,6 +1914,28 @@
             VOD has completed broadcasting
             </summary>
         </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.VODState.IN_PROGRESS">
+            <summary>
+            VOD is currently broadcasting
+            </summary>
+        </member>
+        <member name="F:BrimeAPI.com.brimelive.api.vods.VODState.UNKNOWN">
+            <summary>
+            Unknown / unrecognized state
+            </summary>
+        </member>
+        <member name="T:BrimeAPI.com.brimelive.api.vods.VODStateUtil">
+            <summary>
+            Helper class for extension methods for VODState
+            </summary>
+        </member>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.VODStateUtil.GetStateString(BrimeAPI.com.brimelive.api.vods.VODState)">
+            <summary>
+            Convert given state into valid JSON string output
+            </summary>
+            <param name="state">state to convert</param>
+            <returns>string suitable for inclusion in JSON</returns>
+        </member>
         <member name="T:BrimeAPI.com.brimelive.api.vods.BrimeVOD">
             <summary>
             Class <c>BrimeVOD</c> is used to record the details of a single VOD. This record includes information about the original broadcast,
@@ -1428,6 +1981,11 @@
             Channel ID for the channel which broadcast this VOD
             </summary>
         </member>
+        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.Channel">
+            <summary>
+            Retrieve the Channel Information
+            </summary>
+        </member>
         <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVOD.VODVideoURL">
             <summary>
             URL for the VOD video data
@@ -1469,79 +2027,11 @@
             </summary>
             <param name="jsonData">JSON data to process</param>
         </member>
-        <member name="T:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo">
-            <summary>
-            <para>Class <c>BrimeVODStreamInfo</c> is used to record the stream information assocated with a VOD record. This item
-            records the Stream Title and Stream Category used when the original stream was broadcast.</para>
-            <example>Example: <code>
-            "stream": {
-                "title": "Brime Api Example",
-                "category": {
-                    "_id": "606e93525fa50e5780970135",
-                    "genres": [],
-                    "name": "Uncategorized",
-                    "slug": "uncategorized",
-                    "summary": "",
-                    "cover": "https://content.brimecdn.com/brime/category_images/uncategorized.png",
-                    "type": "entertainment"
-                }
-            }
-            </code></example>
-            </summary>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVOD.toJSON">
+            <inheritdoc />
         </member>
-        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ERR_MissingTitle">
-            <summary>
-            Error message when missing Title element in JSON data.
-            </summary>
-        </member>
-        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ERR_MisingCategory">
-            <summary>
-            Error message when missing Category element in JSON data.
-            </summary>
-        </member>
-        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ID_Title">
-            <summary>
-            ID for Title element when loading/storing to JSON.
-            </summary>
-        </member>
-        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ID_Category">
-            <summary>
-            ID for Category element when loading/storing to JSON.
-            </summary>
-        </member>
-        <member name="F:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.Logger">
-            <summary>
-            Local NLog logging class.
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.Title">
-            <summary>
-            Property <c>Title</c> specifies the Stream Title of the original broadcast.
-            </summary>
-        </member>
-        <member name="P:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.Category">
-            <summary>
-            Property <c>Category</c> specifies the Stream Category of the original broadcast.
-            </summary>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.#ctor(Newtonsoft.Json.Linq.JToken)">
-            
-             <summary>Construct a new <c>BrimeVODStreamInfo</c> record based on the given JSON response data.</summary>
-             <param name="jsonData"><c>JToken</c> containing the JSON formatted record from API response.</param>
-             <exception cref="T:BrimeAPI.com.brimelive.api.errors.BrimeAPIMalformedResponse">Thrown if provided JSON data is missing either <c>title</c> or <c>category</c> elements.</exception>
-            
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.toJSON">
-            <summary>
-            Convert this record to its equivalent JSON formatted text.
-            </summary>
-            <returns><c>String</c> containing JSON formatted data for this record</returns>
-        </member>
-        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVODStreamInfo.ToString">
-            <summary>
-            Convert this record to a <c>string</c> value suitable for display/logging.
-            </summary>
-            <returns>"BrimeVODStreamInfo: {JSON object}"</returns>
+        <member name="M:BrimeAPI.com.brimelive.api.vods.BrimeVOD.ToString">
+            <inheritdoc />
         </member>
         <member name="T:BrimeAPI.com.brimelive.api.vods.ChannelVodsRequest">
             <summary>
