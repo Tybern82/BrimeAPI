@@ -8,6 +8,62 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BrimeAPI.com.brimelive.api.users {
+
+    /// <summary>
+    /// Identify the roles assocated with Users
+    /// </summary>
+    public enum UserRoles {
+        /// <summary>
+        /// Employees of Brime
+        /// </summary>
+        STAFF,
+
+        /// <summary>
+        /// Platform-wide moderators
+        /// </summary>
+        PLATFORM_MOD,
+
+        /// <summary>
+        /// A verified user account
+        /// </summary>
+        VERIFIED,
+
+        /// <summary>
+        /// User with Brime Pro
+        /// </summary>
+        BRIME_PRO,
+
+        /// <summary>
+        /// A chat bot
+        /// </summary>
+        BOT,
+
+        /// <summary>
+        /// A normal user
+        /// </summary>
+        USER,
+
+        /// <summary>
+        /// The owner of the current channel (chat)
+        /// </summary>
+        CREATOR,
+
+        /// <summary>
+        /// A user that is subscribed to the current channel (chat)
+        /// </summary>
+        SUBSCRIBER,
+
+        /// <summary>
+        /// A user that is following the current channel (chat)
+        /// </summary>
+        FOLLOWER,
+
+        /// <summary>
+        /// A moderator of the current channel (chat)
+        /// </summary>
+        MODERATOR
+    }
+
     /// <summary>
     /// Identifies a Brime User. Note that most requests which retrieve User details require Special Access
     /// on the client-ID.

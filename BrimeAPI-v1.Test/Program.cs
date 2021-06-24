@@ -237,6 +237,17 @@ namespace BrimeAPI.Test {
                 Logger.Error(e.ToString());
             }
 
+            Logger.Info("Checking GlobalBadgesRequest");
+            try {
+                GlobalBadgesRequest req = new GlobalBadgesRequest();
+                Dictionary<UserRoles, BrimeBadge> badges = req.getResponse();
+                foreach (UserRoles role in badges.Keys) {
+                    Logger.Info("Badge for role <" + Enum.GetName(typeof(UserRoles), role) + ">: " + badges[role].ImageLink);
+                }
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
+            }
+
             Logger.Info("Checks complete");
 
             Console.WriteLine("Press <return> to close...");

@@ -45,7 +45,7 @@ namespace BrimeAPI.com.brimelive.api.categories {
         /// <summary>
         /// Identify cover-art for this category
         /// </summary>
-        public Uri CoverURL { get; private set; }
+        public Uri? CoverURL { get; private set; }
 
         /// <summary>
         /// Identify the type of Category
@@ -89,11 +89,14 @@ namespace BrimeAPI.com.brimelive.api.categories {
             Summary = curr ?? "";
 
             curr = jsonData.Value<string>("cover");
-            if (curr == null) throw new BrimeAPIMalformedResponse("Missing Cover URL in Category");
-            try {
-                CoverURL = new Uri(curr);
-            } catch (Exception e) when (e is ArgumentNullException || e is UriFormatException) {
-                throw new BrimeAPIMalformedResponse("Invalid Cover URL in Category", e);
+            if (string.IsNullOrWhiteSpace(curr)) {
+                CoverURL = null;
+            } else {
+                try {
+                    CoverURL = new Uri(curr);
+                } catch (Exception e) when (e is ArgumentNullException || e is UriFormatException) {
+                    throw new BrimeAPIMalformedResponse("Invalid Cover URL in Category", e);
+                }
             }
 
             curr = jsonData.Value<string>("type");
@@ -124,9 +127,11 @@ namespace BrimeAPI.com.brimelive.api.categories {
                 .Append(Genres.toJSON<string>("genres")).Append(", ")
                 .Append(Name.toJSON("name")).Append(", ")
                 .Append(Slug.toJSON("slug")).Append(", ")
-                .Append(Summary.toJSON("summary")).Append(", ")
-                .Append(CoverURL.toJSON("cover")).Append(", ")
-                .Append(Type.toJSON("type"));
+                .Append(Summary.toJSON("summary")).Append(", ");
+            if (CoverURL != null) {
+                _result.Append(CoverURL.toJSON("cover")).Append(", ");
+            }
+            _result.Append(Type.toJSON("type"));
             if (IGDB != -1) _result.Append(", ").Append(IGDB.toJSON("igdb_id"));
             _result.Append("}");
             return _result.ToString();
