@@ -91,20 +91,23 @@ namespace BrimeAPI.com.brimelive.api.realtime {
                 }
             }
             try {
-                Timestamp = DateTimeOffset.FromUnixTimeSeconds(message.Value<long>("timestamp")).DateTime;
-            } catch (Exception) {
-                Timestamp = message.Value<DateTime>("timestamp");
+                long tstamp = message.Value<long>("timestamp");
+                DateTimeOffset offset = DateTimeOffset.FromUnixTimeMilliseconds(tstamp);
+                Timestamp = offset.DateTime;
+            } catch (Exception e) {
+                Logger.Error(e.ToString());
             }
         }
 
         /// <inheritdoc />
         public override string ToString() {
             string _result = "ChannelID: " + ChannelID + "\n";
-            _result += "Message: " + Message + "\n";
+            _result += "Message: \"" + Message + "\"\n";
             _result += "Sender: " + Sender + "\n";
+            _result += "TimeStamp: " + Timestamp + "\n";
             _result += "Emotes: {\n";
             foreach (KeyValuePair<string,BrimeChatEmote> item in Emotes) {
-                _result += "   " + item.Key + ": " + item.Value.EmoteID + ",\n";
+                _result += "   " + item.Key + ": \"" + item.Value.EmoteID + "\",\n";
             }
             _result += "}";
             return _result;

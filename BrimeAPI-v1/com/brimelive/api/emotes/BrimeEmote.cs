@@ -93,9 +93,9 @@ namespace BrimeAPI.com.brimelive.api.emotes {
         }
 
         private static string getSize(BrimeEmoteSize sz) => sz switch {
-            BrimeEmoteSize.X3 => "x3",
-            BrimeEmoteSize.X2 => "x2",
-            _ => "x1",
+            BrimeEmoteSize.X3 => "3x",
+            BrimeEmoteSize.X2 => "2x",
+            _ => "1x",
         };
     }
 }
